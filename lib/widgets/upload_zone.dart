@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../theme/app_theme.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'design_system.dart';
 
 class UploadZone extends StatefulWidget {
   final void Function(File file) onImagePicked;
@@ -12,29 +13,10 @@ class UploadZone extends StatefulWidget {
   State<UploadZone> createState() => _UploadZoneState();
 }
 
-class _UploadZoneState extends State<UploadZone>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _pulseCtrl;
-  late final Animation<double> _pulse;
+class _UploadZoneState extends State<UploadZone> {
   final _picker = ImagePicker();
-
-  @override
-  void initState() {
-    super.initState();
-    _pulseCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1600),
-    )..repeat(reverse: true);
-    _pulse = Tween<double>(begin: 0.97, end: 1.0).animate(
-      CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _pulseCtrl.dispose();
-    super.dispose();
-  }
+  bool _isHovering = false;
+  bool _isPressed = false;
 
   Future<void> _pickImage(ImageSource source) async {
     final picked = await _picker.pickImage(
@@ -48,54 +30,52 @@ class _UploadZoneState extends State<UploadZone>
   }
 
   void _showSourceSheet(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     showModalBottomSheet(
       context: context,
-      backgroundColor: VistoneColors.bgCard,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (_) => Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 36,
-              height: 4,
-              margin: const EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                color: VistoneColors.textMuted.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(2),
+      backgroundColor: theme.dialogTheme.backgroundColor ?? theme.colorScheme.surface,
+      shape: RoundedRectangleBorder(borderRadius: AppShapes.bottomSheet),
+      builder: (_) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s24, vertical: AppSpacing.s32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: AppSpacing.s32),
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.gray700 : AppColors.gray300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-            ),
-            const Text(
-              'Choose Photo',
-              style: TextStyle(
-                color: VistoneColors.textPrimary,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+              Text(
+                'Upload Photo',
+                style: theme.textTheme.titleLarge,
               ),
-            ),
-            const SizedBox(height: 20),
-            _SheetOption(
-              icon: Icons.camera_alt_outlined,
-              label: 'Take a Photo',
-              onTap: () {
-                Navigator.pop(context);
-                _pickImage(ImageSource.camera);
-              },
-            ),
-            const SizedBox(height: 12),
-            _SheetOption(
-              icon: Icons.photo_library_outlined,
-              label: 'Choose from Gallery',
-              onTap: () {
-                Navigator.pop(context);
-                _pickImage(ImageSource.gallery);
-              },
-            ),
-            const SizedBox(height: 12),
-          ],
+              const SizedBox(height: AppSpacing.s32),
+              _SheetOption(
+                icon: Symbols.camera,
+                label: 'Take a Photo',
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+              const SizedBox(height: AppSpacing.s12),
+              _SheetOption(
+                icon: Symbols.photo_library,
+                label: 'Choose from Gallery',
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -103,56 +83,70 @@ class _UploadZoneState extends State<UploadZone>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _pulse,
-      builder: (_, child) =>
-          Transform.scale(scale: _pulse.value, child: child),
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Subtle scaling for press effect
+    final double scale = _isPressed ? 0.98 : (_isHovering ? 1.01 : 1.0);
+    
+    final borderColor = isDark ? AppColors.gray700 : AppColors.gray300;
+    final hoverBorderColor = theme.colorScheme.primary;
+    final bgColor = _isHovering 
+        ? (isDark ? AppColors.gray800 : AppColors.gray100)
+        : Colors.transparent;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovering = true),
+      onExit: (_) => setState(() => _isHovering = false),
       child: GestureDetector(
-        onTap: () => _showSourceSheet(context),
-        child: Container(
-          height: 220,
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) {
+          setState(() => _isPressed = false);
+          _showSourceSheet(context);
+        },
+        onTapCancel: () => setState(() => _isPressed = false),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.identity()..scale(scale, scale),
+          transformAlignment: Alignment.center,
+          height: 240,
           width: double.infinity,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            gradient: LinearGradient(
-              colors: [
-                VistoneColors.brand1.withValues(alpha: 0.12),
-                VistoneColors.brand2.withValues(alpha: 0.08),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: bgColor,
+            borderRadius: AppShapes.card,
             border: Border.all(
-              color: VistoneColors.brand1.withValues(alpha: 0.35),
-              width: 1.5,
+              color: _isHovering ? hoverBorderColor : borderColor,
+              width: _isHovering ? 2.0 : 1.0,
             ),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 72,
-                height: 72,
-                decoration: const BoxDecoration(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.gray800 : AppColors.gray100,
                   shape: BoxShape.circle,
-                  gradient: VistoneColors.brandGradient,
                 ),
-                child: const Icon(Icons.add_a_photo_outlined,
-                    color: Colors.white, size: 32),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Tap to upload your selfie',
-                style: TextStyle(
-                  color: VistoneColors.textPrimary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                child: Icon(
+                  Symbols.add_photo_alternate,
+                  color: theme.colorScheme.primary,
+                  size: 28,
                 ),
               ),
-              const SizedBox(height: 4),
-              const Text(
+              const SizedBox(height: AppSpacing.s24),
+              Text(
+                'Upload your photo',
+                style: theme.textTheme.titleMedium,
+              ),
+              const SizedBox(height: AppSpacing.s8),
+              Text(
                 'JPG, PNG or WebP',
-                style: TextStyle(color: VistoneColors.textMuted, fontSize: 13),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                ),
               ),
             ],
           ),
@@ -167,20 +161,28 @@ class _SheetOption extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _SheetOption(
-      {required this.icon, required this.label, required this.onTap});
+  const _SheetOption({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return ListTile(
       onTap: onTap,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      tileColor: VistoneColors.surface,
-      leading: Icon(icon, color: VistoneColors.brand1),
-      title: Text(label,
-          style: const TextStyle(
-              color: VistoneColors.textPrimary,
-              fontWeight: FontWeight.w500)),
+      shape: RoundedRectangleBorder(borderRadius: AppShapes.button),
+      tileColor: isDark ? AppColors.gray800 : AppColors.gray100,
+      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.s20, vertical: AppSpacing.s4),
+      leading: Icon(icon, color: theme.colorScheme.primary),
+      title: Text(
+        label,
+        style: theme.textTheme.titleMedium?.copyWith(fontSize: 16),
+      ),
+      trailing: Icon(Symbols.chevron_right, color: isDark ? AppColors.gray600 : AppColors.gray400),
     );
   }
 }

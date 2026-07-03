@@ -1,8 +1,9 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import '../models/color_swatch.dart' as models;
-import '../theme/app_theme.dart';
+import '../widgets/design_system.dart';
 
 class ColorPreviewScreen extends StatelessWidget {
   final models.ColorSwatch swatch;
@@ -23,9 +24,10 @@ class ColorPreviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final color = _parseHex(swatch.hex);
     final luminance = color.computeLuminance();
-    final onColor = luminance > 0.35 ? Colors.black87 : Colors.white;
+    final onColor = luminance > 0.4 ? Colors.black87 : Colors.white;
 
     return Scaffold(
       body: Stack(
@@ -43,85 +45,76 @@ class ColorPreviewScreen extends StatelessWidget {
                 // Back button
                 Align(
                   alignment: Alignment.topLeft,
-                  child: IconButton(
-                    icon: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.s8),
+                    child: IconButton(
+                      icon: Container(
+                        padding: const EdgeInsets.all(AppSpacing.s8),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Symbols.arrow_back, color: onColor, size: 24),
                       ),
-                      child: Icon(Icons.arrow_back, color: onColor, size: 20),
+                      onPressed: () => context.pop(),
                     ),
-                    onPressed: () => context.pop(),
                   ),
                 ),
 
                 const Spacer(),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s32),
                   child: Column(
                     children: [
                       Text(
                         swatch.name,
-                        style: TextStyle(
+                        style: theme.textTheme.displayMedium?.copyWith(
                           color: onColor,
-                          fontSize: 32,
-                          fontFamily: 'Georgia',
-                          fontWeight: FontWeight.w700,
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AppSpacing.s12),
                       GestureDetector(
                         onTap: () async {
                           await FlutterClipboard.copy(swatch.hex);
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(
-                                    '${swatch.hex} copied to clipboard'),
-                                backgroundColor: VistoneColors.bgCard,
+                                content: Text('${swatch.hex} copied to clipboard'),
                               ),
                             );
                           }
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s20, vertical: AppSpacing.s8),
                           decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.black.withValues(alpha: 0.1),
+                            borderRadius: AppShapes.chip,
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
                                 swatch.hex.toUpperCase(),
-                                style: TextStyle(
+                                style: theme.textTheme.titleMedium?.copyWith(
                                   color: onColor.withValues(alpha: 0.9),
-                                  fontSize: 16,
                                   fontFamily: 'monospace',
-                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              Icon(Icons.copy,
-                                  color: onColor.withValues(alpha: 0.7),
-                                  size: 16),
+                              const SizedBox(width: AppSpacing.s12),
+                              Icon(Symbols.content_copy, color: onColor.withValues(alpha: 0.7), size: 18),
                             ],
                           ),
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: AppSpacing.s32),
                       Text(
                         isAvoid
                             ? 'This color may clash with ${undertone.toLowerCase()} undertones and wash out your complexion.'
                             : 'This color harmonizes beautifully with ${undertone.toLowerCase()} undertones, bringing out a natural glow.',
-                        style: TextStyle(
+                        style: theme.textTheme.bodyLarge?.copyWith(
                           color: onColor.withValues(alpha: 0.8),
-                          fontSize: 16,
-                          height: 1.6,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -130,7 +123,7 @@ class ColorPreviewScreen extends StatelessWidget {
                 ),
 
                 const Spacer(),
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSpacing.s48),
               ],
             ),
           ),

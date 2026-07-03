@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
+import 'design_system.dart';
 
 class MonkScaleSlider extends StatelessWidget {
   final List<String> monkColors;
@@ -18,19 +18,31 @@ class MonkScaleSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: VistoneColors.glassMorphism.copyWith(
-        borderRadius: BorderRadius.circular(20),
+      padding: const EdgeInsets.all(AppSpacing.s24),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.cardDark : AppColors.cardLight,
+        borderRadius: AppShapes.card,
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.gray200,
+          width: 1,
+        ),
+        boxShadow: AppElevations.level1(isDark),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'MONK SCALE',
-            style: Theme.of(context).textTheme.labelSmall,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: isDark ? AppColors.gray400 : AppColors.gray500,
+              letterSpacing: 1.0,
+            ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.s20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -46,41 +58,30 @@ class MonkScaleSlider extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       AnimatedContainer(
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.elasticOut,
-                        height: isSelected ? 64 : 48,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.decelerate,
+                        height: isSelected ? 64 : 40,
                         decoration: BoxDecoration(
                           color: color,
                           borderRadius: BorderRadius.circular(100),
-                          boxShadow: isSelected
-                              ? [
-                                  BoxShadow(
-                                    color: VistoneColors.success
-                                        .withValues(alpha: 0.6),
-                                    blurRadius: 12,
-                                    spreadRadius: 2,
-                                  ),
-                                ]
-                              : [],
                           border: isSelected
-                              ? Border.all(
-                                  color: VistoneColors.success, width: 2.5)
+                              ? Border.all(color: AppColors.primary, width: 2)
                               : Border.all(
-                                  color: Colors.white.withValues(alpha: 0.15),
-                                  width: 1),
+                                  color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.gray200,
+                                  width: 1,
+                                ),
+                          boxShadow: isSelected ? AppElevations.level2(isDark) : null,
                         ),
                       ),
                       AnimatedOpacity(
                         duration: const Duration(milliseconds: 300),
                         opacity: isSelected ? 1.0 : 0.0,
                         child: Padding(
-                          padding: const EdgeInsets.only(top: 6),
+                          padding: const EdgeInsets.only(top: AppSpacing.s8),
                           child: Text(
                             '$toneNumber',
-                            style: const TextStyle(
-                              color: VistoneColors.success,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
+                            style: theme.textTheme.labelMedium?.copyWith(
+                              color: theme.colorScheme.primary,
                             ),
                             textAlign: TextAlign.center,
                           ),

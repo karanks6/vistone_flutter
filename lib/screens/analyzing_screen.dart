@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/analysis_provider.dart';
-import '../theme/app_theme.dart';
+import '../widgets/design_system.dart';
 
 class AnalyzingScreen extends ConsumerStatefulWidget {
   const AnalyzingScreen({super.key});
@@ -13,27 +13,32 @@ class AnalyzingScreen extends ConsumerStatefulWidget {
 
 class _AnalyzingScreenState extends ConsumerState<AnalyzingScreen>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _scanCtrl;
-  late final Animation<double> _scanAnim;
+  late final AnimationController _shimmerCtrl;
+  late final Animation<double> _shimmerAnim;
 
   @override
   void initState() {
     super.initState();
-    _scanCtrl = AnimationController(
+    _shimmerCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1800),
-    )..repeat(reverse: true);
-    _scanAnim = CurvedAnimation(parent: _scanCtrl, curve: Curves.easeInOut);
+      duration: const Duration(milliseconds: 1500),
+    )..repeat();
+    _shimmerAnim = Tween<double>(begin: -1.0, end: 2.0).animate(
+      CurvedAnimation(parent: _shimmerCtrl, curve: Curves.easeInOutSine),
+    );
   }
 
   @override
   void dispose() {
-    _scanCtrl.dispose();
+    _shimmerCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
     final analysisState = ref.watch(analysisProvider);
     final selectedImage = ref.watch(selectedImageProvider);
 
@@ -51,96 +56,60 @@ class _AnalyzingScreenState extends ConsumerState<AnalyzingScreen>
     }
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(gradient: VistoneColors.bgGradient),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                ShaderMask(
-                  shaderCallback: (b) =>
-                      VistoneColors.brandGradient.createShader(b),
-                  child: const Text(
-                    'Analyzing...',
-                    style: TextStyle(
-                      fontFamily: 'Georgia',
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 32),
+      body: SafeArea(
+        child: Padding(
+          padding: AppSpacing.pagePadding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: AppSpacing.s20),
+              Text(
+                'Analyzing...',
+                style: theme.textTheme.headlineMedium,
+              ),
+              const SizedBox(height: AppSpacing.s32),
+              
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: AppShapes.card,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      if (selectedImage != null)
+                        Image.file(selectedImage, fit: BoxFit.cover)
+                      else
+                        Container(color: isDark ? AppColors.surfaceDark : AppColors.gray100),
 
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(24),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        if (selectedImage != null)
-                          Image.file(selectedImage, fit: BoxFit.cover)
-                        else
-                          Container(color: VistoneColors.surface),
-
-                        // Gradient overlay
-                        Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                VistoneColors.bgDark.withValues(alpha: 0.6),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        // Animated scan line
-                        AnimatedBuilder(
-                          animation: _scanAnim,
-                          builder: (_, __) {
-                            return Positioned(
-                              top: MediaQuery.of(context).size.height *
-                                  0.4 *
-                                  _scanAnim.value,
-                              left: 0,
-                              right: 0,
-                              child: Container(
-                                height: 2,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(colors: [
-                                    Colors.transparent,
-                                    VistoneColors.brand1.withValues(alpha: 0.8),
-                                    VistoneColors.brand2.withValues(alpha: 0.8),
-                                    Colors.transparent,
-                                  ]),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: VistoneColors.brand1
-                                          .withValues(alpha: 0.5),
-                                      blurRadius: 12,
-                                      spreadRadius: 4,
-                                    ),
-                                  ],
-                                ),
+                      // Elegant Shimmer Overlay
+                      AnimatedBuilder(
+                        animation: _shimmerAnim,
+                        builder: (_, __) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                stops: const [0.0, 0.5, 1.0],
+                                colors: [
+                                  Colors.white.withValues(alpha: 0.0),
+                                  Colors.white.withValues(alpha: isDark ? 0.1 : 0.3),
+                                  Colors.white.withValues(alpha: 0.0),
+                                ],
+                                transform: GradientRotation(_shimmerAnim.value * 3.14159),
                               ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
+              ),
 
-                const SizedBox(height: 32),
-                _StageIndicator(currentStage: stage),
-                const SizedBox(height: 24),
-              ],
-            ),
+              const SizedBox(height: AppSpacing.s40),
+              _StageIndicator(currentStage: stage),
+              const SizedBox(height: AppSpacing.s24),
+            ],
           ),
         ),
       ),
@@ -151,20 +120,15 @@ class _AnalyzingScreenState extends ConsumerState<AnalyzingScreen>
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: VistoneColors.bgCard,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Analysis Failed',
-            style: TextStyle(color: VistoneColors.textPrimary)),
-        content: Text(message,
-            style: const TextStyle(color: VistoneColors.textSecondary)),
+        title: const Text('Analysis Failed'),
+        content: Text(message),
         actions: [
-          TextButton(
+          AppButton.text(
+            label: 'Try Again',
             onPressed: () {
               Navigator.pop(context);
               context.go('/home');
             },
-            child: const Text('Try Again',
-                style: TextStyle(color: VistoneColors.brand1)),
           ),
         ],
       ),
@@ -186,53 +150,58 @@ class _StageIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: VistoneColors.glassMorphism.copyWith(
-        borderRadius: BorderRadius.circular(20),
+      padding: const EdgeInsets.all(AppSpacing.s24),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.cardDark : AppColors.cardLight,
+        borderRadius: AppShapes.card,
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.gray200,
+          width: 1,
+        ),
       ),
       child: Column(
         children: _stages.map((stage) {
-          final isDone = _stages.indexOf(stage) <
-              _stages.indexOf(currentStage);
+          final isDone = _stages.indexOf(stage) < _stages.indexOf(currentStage);
           final isCurrent = stage == currentStage;
+          
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.s8),
             child: Row(
               children: [
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: isDone
-                      ? const Icon(Icons.check_circle,
-                          color: VistoneColors.success,
-                          size: 18,
-                          key: ValueKey('done'))
-                      : isCurrent
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: VistoneColors.brand1,
-                              ),
-                            )
-                          : const Icon(Icons.circle_outlined,
-                              color: VistoneColors.textMuted,
-                              size: 18,
-                              key: ValueKey('pending')),
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: isDone
+                        ? const Icon(Icons.check_circle,
+                            color: AppColors.success,
+                            size: 20,
+                            key: ValueKey('done'))
+                        : isCurrent
+                            ? const CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                              )
+                            : Icon(Icons.circle_outlined,
+                                color: isDark ? AppColors.gray600 : AppColors.gray300,
+                                size: 20,
+                                key: const ValueKey('pending')),
+                  ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AppSpacing.s16),
                 Text(
                   stage,
-                  style: TextStyle(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: isCurrent
-                        ? VistoneColors.textPrimary
+                        ? theme.textTheme.bodyLarge?.color
                         : isDone
-                            ? VistoneColors.success
-                            : VistoneColors.textMuted,
-                    fontSize: 14,
-                    fontWeight:
-                        isCurrent ? FontWeight.w600 : FontWeight.w400,
+                            ? AppColors.success
+                            : (isDark ? AppColors.gray600 : AppColors.gray400),
+                    fontWeight: isCurrent ? FontWeight.w600 : FontWeight.w400,
                   ),
                 ),
               ],

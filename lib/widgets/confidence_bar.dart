@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
+import 'design_system.dart';
 
 class ConfidenceBar extends StatefulWidget {
   final String label;
@@ -34,13 +34,16 @@ class _ConfidenceBarState extends State<ConfidenceBar>
   }
 
   Color _barColor(double v) {
-    if (v >= 0.7) return VistoneColors.success;
-    if (v >= 0.45) return VistoneColors.warning;
-    return VistoneColors.error;
+    if (v >= 0.7) return AppColors.success;
+    if (v >= 0.45) return AppColors.warning;
+    return AppColors.error;
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return AnimatedBuilder(
       animation: _anim,
       builder: (_, __) {
@@ -52,24 +55,28 @@ class _ConfidenceBarState extends State<ConfidenceBar>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(widget.label,
-                    style: const TextStyle(
-                        color: VistoneColors.textSecondary, fontSize: 13)),
-                Text('$pct%',
-                    style: TextStyle(
-                        color: color,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700)),
+                Text(
+                  widget.label,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: isDark ? AppColors.gray400 : AppColors.gray600,
+                  ),
+                ),
+                Text(
+                  '$pct%',
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: color,
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: AppSpacing.s8),
             ClipRRect(
               borderRadius: BorderRadius.circular(100),
               child: LinearProgressIndicator(
                 value: _anim.value,
-                backgroundColor: Colors.white.withValues(alpha: 0.08),
+                backgroundColor: isDark ? AppColors.gray800 : AppColors.gray200,
                 valueColor: AlwaysStoppedAnimation<Color>(color),
-                minHeight: 6,
+                minHeight: 8,
               ),
             ),
           ],
