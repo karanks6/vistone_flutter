@@ -70,25 +70,29 @@ class AppElevations {
   // ── Shadows ───────────────────────────────────────────────────────────────
   static List<BoxShadow> level1(bool isDark) => [
         BoxShadow(
-          color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.06),
-          blurRadius: 6,
-          offset: const Offset(0, 2),
+          color: Colors.black.withValues(alpha: isDark ? 0.20 : 0.04),
+          blurRadius: 2,
+          offset: const Offset(0, 1),
         ),
-      ];
-
-  static List<BoxShadow> level2(bool isDark) => [
         BoxShadow(
-          color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.08),
+          color: Colors.black.withValues(alpha: isDark ? 0.30 : 0.06),
           blurRadius: 12,
           offset: const Offset(0, 4),
         ),
       ];
 
-  static List<BoxShadow> level3(bool isDark) => [
+  static List<BoxShadow> level2(bool isDark) => [
         BoxShadow(
-          color: Colors.black.withValues(alpha: isDark ? 0.30 : 0.10),
-          blurRadius: 20,
-          offset: const Offset(0, 10),
+          color: Colors.black.withValues(alpha: isDark ? 0.40 : 0.08),
+          blurRadius: 24,
+          offset: const Offset(0, 8),
+        ),
+        BoxShadow(
+          color: Colors.black.withValues(alpha: isDark ? 0.50 : 0.10),
+          blurRadius: 48,
+          offset: const Offset(0, 16),
         ),
       ];
+
+  static List<BoxShadow> level3(bool isDark) => level2(isDark); // Map level 3 to level 2 for consistency
 }

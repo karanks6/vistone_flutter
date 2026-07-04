@@ -95,7 +95,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: AppShapes.card,
           side: BorderSide(
-            color: brightness == Brightness.light ? AppColors.gray200 : Colors.white.withValues(alpha: 0.1),
+            color: brightness == Brightness.light ? AppColors.border : Colors.white.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -111,7 +111,7 @@ class AppTheme {
       // ── Input Decoration ────────────────────────────────────────────────────
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: brightness == Brightness.light ? AppColors.gray100 : AppColors.surfaceDark,
+        fillColor: brightness == Brightness.light ? AppColors.gray50 : AppColors.surfaceDark,
         contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.s16, vertical: AppSpacing.s16),
         border: OutlineInputBorder(
           borderRadius: AppShapes.textField,
@@ -135,7 +135,7 @@ class AppTheme {
 
       // ── Divider ─────────────────────────────────────────────────────────────
       dividerTheme: DividerThemeData(
-        color: brightness == Brightness.light ? AppColors.gray200 : Colors.white.withValues(alpha: 0.1),
+        color: brightness == Brightness.light ? AppColors.border : Colors.white.withValues(alpha: 0.1),
         space: 1,
         thickness: 1,
       ),
@@ -144,8 +144,8 @@ class AppTheme {
       // Note: We use custom AppButton for advanced states, but define base styles here
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: colorScheme.primary,
-          foregroundColor: brightness == Brightness.light ? Colors.white : AppColors.bgDark,
+          backgroundColor: AppColors.accent, // Terracotta for CTAs
+          foregroundColor: Colors.white, // Always white on Terracotta
           shape: RoundedRectangleBorder(borderRadius: AppShapes.button),
           padding: AppSpacing.buttonPadding,
           elevation: 0, // Elevations are managed explicitly

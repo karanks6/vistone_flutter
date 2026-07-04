@@ -5,13 +5,25 @@ import 'providers/theme_provider.dart';
 import 'router.dart';
 import 'widgets/design_system.dart';
 
-void main() {
+import 'package:shared_preferences/shared_preferences.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
+  
+  final prefs = await SharedPreferences.getInstance();
+  
   // The system UI overlay style is now managed dynamically by AppTheme
-  runApp(const ProviderScope(child: VistoneApp()));
+  runApp(
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
+      child: const VistoneApp(),
+    ),
+  );
 }
 
 class VistoneApp extends ConsumerWidget {

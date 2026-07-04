@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import '../widgets/design_system.dart';
+import '../widgets/botanical_background.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -29,30 +30,39 @@ class AboutScreen extends StatelessWidget {
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   // Hero
-                  Container(
-                    padding: const EdgeInsets.all(AppSpacing.s32),
-                    decoration: BoxDecoration(
-                      color: isDark ? AppColors.gray800 : AppColors.gray100,
-                      borderRadius: AppShapes.card,
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          'Vistone AI',
-                          style: theme.textTheme.displayMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: -1.0,
+                  ClipRRect(
+                    borderRadius: AppShapes.card,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.gray800 : const Color(0xFFE9EDDF), // Pale sage green card
+                      ),
+                      child: BotanicalBackground(
+                        opacity: isDark ? 0.05 : 0.4,
+                        showBottomLeft: false,
+                        showTopRight: true,
+                        child: Padding(
+                          padding: const EdgeInsets.all(AppSpacing.s32),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Vistone AI',
+                                style: theme.textTheme.displayMedium?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -1.0,
+                                ),
+                              ),
+                              const SizedBox(height: AppSpacing.s12),
+                              Text(
+                                'See the colors that\nbring out your best.',
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: isDark ? AppColors.gray400 : AppColors.gray600,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.s12),
-                        Text(
-                          'Discover the colors that love you back.',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            color: isDark ? AppColors.gray400 : AppColors.gray600,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                      ),
                     ),
                   ),
 

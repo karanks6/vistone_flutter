@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// 13-tier Typography System for Vistone.
-/// Uses the Inter font family.
+/// 13-tier Typography System for Vistone AI.
+/// Uses Playfair Display for headings and Inter for body text.
 class AppTypography {
   AppTypography._();
 
@@ -13,39 +13,39 @@ class AppTypography {
       displayColor: displayColor,
       bodyColor: bodyColor,
     ).copyWith(
-      displayLarge: GoogleFonts.inter(
+      displayLarge: GoogleFonts.playfairDisplay(
         fontSize: 56, // Display XL
         fontWeight: FontWeight.w700,
-        height: 1.45,
-        letterSpacing: 0.2,
+        height: 1.2,
+        letterSpacing: 0,
         color: displayColor,
       ),
-      displayMedium: GoogleFonts.inter(
+      displayMedium: GoogleFonts.playfairDisplay(
         fontSize: 48, // Display Large
         fontWeight: FontWeight.w700,
-        height: 1.45,
-        letterSpacing: 0.2,
+        height: 1.2,
+        letterSpacing: 0,
         color: displayColor,
       ),
-      headlineLarge: GoogleFonts.inter(
+      headlineLarge: GoogleFonts.playfairDisplay(
         fontSize: 34, // Headline
         fontWeight: FontWeight.w700,
-        height: 1.45,
-        letterSpacing: 0.2,
+        height: 1.2,
+        letterSpacing: 0,
         color: displayColor,
       ),
-      headlineMedium: GoogleFonts.inter(
+      headlineMedium: GoogleFonts.playfairDisplay(
         fontSize: 24, // Title
         fontWeight: FontWeight.w600,
-        height: 1.45,
-        letterSpacing: 0.2,
+        height: 1.3,
+        letterSpacing: 0,
         color: displayColor,
       ),
-      titleLarge: GoogleFonts.inter(
+      titleLarge: GoogleFonts.playfairDisplay(
         fontSize: 18, // Subtitle
         fontWeight: FontWeight.w600,
-        height: 1.45,
-        letterSpacing: 0.2,
+        height: 1.3,
+        letterSpacing: 0,
         color: displayColor,
       ),
       bodyLarge: GoogleFonts.inter(

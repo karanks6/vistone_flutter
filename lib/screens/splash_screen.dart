@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/design_system.dart';
+import '../widgets/botanical_background.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -48,7 +49,9 @@ class _SplashScreenState extends State<SplashScreen>
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      body: Center(
+      body: BotanicalBackground(
+        opacity: isDark ? 0.15 : 0.4,
+        child: Center(
         child: FadeTransition(
           opacity: _fadeAnim,
           child: AnimatedBuilder(
@@ -61,22 +64,14 @@ class _SplashScreenState extends State<SplashScreen>
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Elegant logo
-                Container(
-                  width: 108,
-                  height: 108,
-                  decoration: BoxDecoration(
-                    color: isDark ? AppColors.gray800 : AppColors.gray100,
-                    shape: BoxShape.circle,
-                  ),
-                  child: ClipOval(
-                    child: Transform.scale(
-                      scale: 1.15, // Zoom in slightly to remove internal padding
-                      child: Image.asset(
-                        'assets/icon/vistone_logo.png',
-                        fit: BoxFit.cover,
-                        color: Colors.white,
-                      ),
-                    ),
+                // Elegant logo (No container, raw graphic tinted)
+                SizedBox(
+                  width: 96,
+                  height: 96,
+                  child: Image.asset(
+                    'assets/icon/vistone_logo.png',
+                    fit: BoxFit.contain,
+                    color: isDark ? Colors.white : AppColors.primary,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.s32),
@@ -99,7 +94,8 @@ class _SplashScreenState extends State<SplashScreen>
             ),
           ),
         ),
-      ),
+        ), // Close BotanicalBackground
+      ), // Close Scaffold
     );
   }
 }
