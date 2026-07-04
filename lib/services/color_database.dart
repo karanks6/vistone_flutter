@@ -34,14 +34,14 @@ class ColorDatabase {
 
     List<ColorSwatch> best = [];
     if (data['best'] != null) {
-      for (var c in (data['best'] as List).take(3)) {
+      for (var c in (data['best'] as List).take(6)) {
         best.add(ColorSwatch(name: c['name'], hex: c['hex']));
       }
     }
 
     List<ColorSwatch> avoid = [];
     if (data['avoid'] != null) {
-      for (var c in (data['avoid'] as List).take(3)) {
+      for (var c in (data['avoid'] as List).take(6)) {
         avoid.add(ColorSwatch(name: c['name'], hex: c['hex']));
       }
     }

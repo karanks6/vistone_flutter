@@ -84,10 +84,11 @@ class ResultScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.s16),
                 
                 // Badges
-                Row(
+                Wrap(
+                  spacing: AppSpacing.s12,
+                  runSpacing: AppSpacing.s8,
                   children: [
                     _Badge(text: 'Monk ${result.tone}'),
-                    const SizedBox(width: AppSpacing.s12),
                     _Badge(text: '${result.undertoneEmoji} ${result.undertone}'),
                   ],
                 ),
@@ -278,9 +279,11 @@ class _SectionHeader extends StatelessWidget {
       children: [
         Icon(icon, size: 24, color: theme.colorScheme.primary),
         const SizedBox(width: AppSpacing.s12),
-        Text(
-          title,
-          style: theme.textTheme.headlineSmall,
+        Expanded(
+          child: Text(
+            title,
+            style: theme.textTheme.headlineSmall,
+          ),
         ),
       ],
     );
