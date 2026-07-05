@@ -484,7 +484,6 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 
 <div align="center">
 
-**Built with ❤️ and color science**
 
 *Vistone AI — Discover your true colors.*
 
