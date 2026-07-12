@@ -321,8 +321,8 @@ vistone_flutter/
 
 **1. Clone the repository**
 ```bash
-git clone https://github.com/karanks6/Vistone-AI-Powered-Colour-Palette-Matcher.git
-cd Vistone-AI-Powered-Colour-Palette-Matcher/vistone_flutter
+git clone https://github.com/karanks6/vistone_flutter.git
+cd vistone_flutter
 ```
 
 **2. Install dependencies**
