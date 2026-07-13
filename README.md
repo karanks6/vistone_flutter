@@ -482,9 +482,10 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 
 ---
 
-<div align="center">
 
+<div align="center">
 
 *Vistone AI — Discover your true colors.*
 
 </div>
+
