@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../providers/analysis_provider.dart';
 import '../widgets/design_system.dart';
 import '../widgets/monk_scale_slider.dart';
@@ -54,7 +55,10 @@ class ResultScreen extends ConsumerWidget {
                 fit: StackFit.expand,
                 children: [
                   if (selectedImage != null)
-                    Image.file(selectedImage, fit: BoxFit.cover),
+                    Image.file(selectedImage, fit: BoxFit.cover)
+                    .animate()
+                    .fadeIn(duration: 800.ms)
+                    .scale(begin: const Offset(1.05, 1.05), end: const Offset(1, 1), duration: 800.ms, curve: Curves.easeOutCubic),
                   
                   // Gradient fade to background
                   DecoratedBox(
@@ -91,26 +95,42 @@ class ResultScreen extends ConsumerWidget {
                     _Badge(text: 'Monk ${result.tone}'),
                     _Badge(text: '${result.undertoneEmoji} ${result.undertone}'),
                   ],
-                ),
+                )
+                .animate()
+                .slideY(begin: 0.2, end: 0, duration: 500.ms, curve: Curves.easeOutCubic)
+                .fadeIn(duration: 500.ms),
+                
                 const SizedBox(height: AppSpacing.s32),
 
                 // Monk Scale
                 MonkScaleSlider(
                   monkColors: result.monkColors,
                   detectedTone: result.tone,
-                ),
+                )
+                .animate()
+                .slideY(begin: 0.2, end: 0, duration: 500.ms, curve: Curves.easeOutCubic, delay: 100.ms)
+                .fadeIn(duration: 500.ms, delay: 100.ms),
+                
                 const SizedBox(height: AppSpacing.s32),
 
                 // Confidence Scores
                 ConfidenceBar(
                   label: 'Tone confidence',
                   value: result.toneConfidence,
-                ),
+                )
+                .animate()
+                .slideY(begin: 0.2, end: 0, duration: 500.ms, curve: Curves.easeOutCubic, delay: 200.ms)
+                .fadeIn(duration: 500.ms, delay: 200.ms),
+                
                 const SizedBox(height: AppSpacing.s16),
+                
                 ConfidenceBar(
                   label: 'Undertone confidence',
                   value: result.utConfidence,
-                ),
+                )
+                .animate()
+                .slideY(begin: 0.2, end: 0, duration: 500.ms, curve: Curves.easeOutCubic, delay: 300.ms)
+                .fadeIn(duration: 500.ms, delay: 300.ms),
                 
                 if (!result.isHighConfidence)
                   Container(
@@ -118,7 +138,7 @@ class ResultScreen extends ConsumerWidget {
                     padding: const EdgeInsets.all(AppSpacing.s16),
                     decoration: BoxDecoration(
                       color: AppColors.warning.withValues(alpha: 0.1),
-                      borderRadius: AppShapes.card,
+                      borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
                     ),
                     child: Row(
@@ -135,10 +155,17 @@ class ResultScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
-                  ),
+                  )
+                  .animate()
+                  .slideY(begin: 0.2, end: 0, duration: 500.ms, delay: 400.ms)
+                  .fadeIn(duration: 500.ms, delay: 400.ms),
 
                 const SizedBox(height: AppSpacing.s48),
-                _SectionHeader(title: 'Your Best Colors', icon: Symbols.auto_awesome),
+                _SectionHeader(title: 'Your Best Colors', icon: Symbols.auto_awesome)
+                .animate()
+                .slideX(begin: -0.1, end: 0, duration: 500.ms, curve: Curves.easeOutQuad, delay: 400.ms)
+                .fadeIn(duration: 500.ms, delay: 400.ms),
+                
                 const SizedBox(height: AppSpacing.s24),
               ]),
             ),
@@ -165,7 +192,10 @@ class ResultScreen extends ConsumerWidget {
                       'undertone': result.undertone,
                     },
                   ),
-                ),
+                )
+                .animate()
+                .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1), duration: 400.ms, curve: Curves.easeOutBack, delay: (500 + (i * 50)).ms)
+                .fadeIn(duration: 400.ms, delay: (500 + (i * 50)).ms),
                 childCount: result.bestColors.length,
               ),
             ),
@@ -176,7 +206,10 @@ class ResultScreen extends ConsumerWidget {
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 const SizedBox(height: AppSpacing.s48),
-                _SectionHeader(title: 'Colors to Avoid', icon: Symbols.block),
+                _SectionHeader(title: 'Colors to Avoid', icon: Symbols.block)
+                .animate()
+                .slideX(begin: -0.1, end: 0, duration: 500.ms, curve: Curves.easeOutQuad, delay: 800.ms)
+                .fadeIn(duration: 500.ms, delay: 800.ms),
                 const SizedBox(height: AppSpacing.s24),
               ]),
             ),
@@ -204,7 +237,10 @@ class ResultScreen extends ConsumerWidget {
                       'undertone': result.undertone,
                     },
                   ),
-                ),
+                )
+                .animate()
+                .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1), duration: 400.ms, curve: Curves.easeOutBack, delay: (900 + (i * 50)).ms)
+                .fadeIn(duration: 400.ms, delay: (900 + (i * 50)).ms),
                 childCount: result.avoidColors.length,
               ),
             ),
@@ -224,7 +260,10 @@ class ResultScreen extends ConsumerWidget {
                     ref.read(analysisProvider.notifier).reset();
                     context.go('/home');
                   },
-                ),
+                )
+                .animate()
+                .slideY(begin: 0.2, end: 0, duration: 500.ms, curve: Curves.easeOutCubic, delay: 1000.ms)
+                .fadeIn(duration: 500.ms, delay: 1000.ms),
                 const SizedBox(height: AppSpacing.s64),
               ]),
             ),
@@ -248,12 +287,19 @@ class _Badge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s16, vertical: AppSpacing.s8),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.gray800 : AppColors.gray100,
-        borderRadius: AppShapes.chip,
+        color: isDark ? AppColors.gray800 : AppColors.surfaceLight,
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark ? AppColors.gray700 : AppColors.gray200,
           width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          )
+        ],
       ),
       child: Text(
         text,
@@ -277,12 +323,21 @@ class _SectionHeader extends StatelessWidget {
     
     return Row(
       children: [
-        Icon(icon, size: 24, color: theme.colorScheme.primary),
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.primary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, size: 24, color: theme.colorScheme.primary),
+        ),
         const SizedBox(width: AppSpacing.s12),
         Expanded(
           child: Text(
             title,
-            style: theme.textTheme.headlineSmall,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ),
       ],
