@@ -22,11 +22,11 @@ class AppSpacing {
   static const double s120 = 120.0;
 
   // ── Standard Paddings ─────────────────────────────────────────────────────
-  static const EdgeInsets pagePadding = EdgeInsets.all(s24);
+  static const EdgeInsets pagePadding = EdgeInsets.all(s20);
   static const EdgeInsets pagePaddingDesktop = EdgeInsets.all(s40);
-  static const EdgeInsets cardPadding = EdgeInsets.all(s24);
-  static const EdgeInsets dialogPadding = EdgeInsets.all(s24);
-  static const EdgeInsets buttonPadding = EdgeInsets.symmetric(horizontal: s20, vertical: 14.0);
+  static const EdgeInsets cardPadding = EdgeInsets.all(s16);
+  static const EdgeInsets dialogPadding = EdgeInsets.all(s20);
+  static const EdgeInsets buttonPadding = EdgeInsets.symmetric(horizontal: s24, vertical: s12);
 
   // ── Breakpoints ───────────────────────────────────────────────────────────
   static const double phoneMax = 599.0;
@@ -39,15 +39,15 @@ class AppSpacing {
 class AppShapes {
   AppShapes._();
 
-  // ── Border Radii ──────────────────────────────────────────────────────────
-  static const double radiusButton = 16.0;
+  // ── Border Radii (Playful 16-20px range) ──────────────────────────────────
+  static const double radiusButton = 18.0;
   static const double radiusTextField = 16.0;
-  static const double radiusCard = 24.0;
-  static const double radiusDialog = 28.0;
+  static const double radiusCard = 20.0;
+  static const double radiusDialog = 20.0;
   static const double radiusSearchBar = 18.0;
-  static const double radiusBottomSheet = 32.0;
-  static const double radiusImage = 20.0;
-  static const double radiusColorPalette = 18.0;
+  static const double radiusBottomSheet = 24.0;
+  static const double radiusImage = 16.0;
+  static const double radiusColorPalette = 16.0;
   static const double radiusChip = 50.0;
 
   static BorderRadius get button => BorderRadius.circular(radiusButton);

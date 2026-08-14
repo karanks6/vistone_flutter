@@ -23,8 +23,8 @@ class AppTheme {
       scaffoldBg: AppColors.bgLight,
       cardBg: AppColors.cardLight,
       dialogBg: AppColors.dialogLight,
-      textColor: AppColors.gray900,
-      textColorSecondary: AppColors.gray700,
+      textColor: AppColors.textPrimaryLight,
+      textColorSecondary: AppColors.textSecondaryLight,
     );
   }
 
@@ -95,7 +95,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: AppShapes.card,
           side: BorderSide(
-            color: brightness == Brightness.light ? AppColors.border : Colors.white.withValues(alpha: 0.1),
+            color: brightness == Brightness.light ? AppColors.border : AppColors.gray700,
             width: 1,
           ),
         ),
@@ -105,13 +105,13 @@ class AppTheme {
       dialogTheme: DialogThemeData(
         backgroundColor: dialogBg,
         shape: RoundedRectangleBorder(borderRadius: AppShapes.dialog),
-        elevation: 0, // Using manual shadows for dialogs usually, but keeping this 0 for standard
+        elevation: 0,
       ),
 
       // ── Input Decoration ────────────────────────────────────────────────────
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: brightness == Brightness.light ? AppColors.gray50 : AppColors.surfaceDark,
+        fillColor: brightness == Brightness.light ? AppColors.surfaceAltLight : AppColors.surfaceAltDark,
         contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.s16, vertical: AppSpacing.s16),
         border: OutlineInputBorder(
           borderRadius: AppShapes.textField,
@@ -135,20 +135,19 @@ class AppTheme {
 
       // ── Divider ─────────────────────────────────────────────────────────────
       dividerTheme: DividerThemeData(
-        color: brightness == Brightness.light ? AppColors.border : Colors.white.withValues(alpha: 0.1),
+        color: brightness == Brightness.light ? AppColors.border : AppColors.gray700,
         space: 1,
         thickness: 1,
       ),
 
       // ── Buttons (Base Styling) ──────────────────────────────────────────────
-      // Note: We use custom AppButton for advanced states, but define base styles here
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.accent, // Terracotta for CTAs
-          foregroundColor: Colors.white, // Always white on Terracotta
+          backgroundColor: colorScheme.primary, // Primary filled
+          foregroundColor: Colors.white, // Always white on Primary
           shape: RoundedRectangleBorder(borderRadius: AppShapes.button),
           padding: AppSpacing.buttonPadding,
-          elevation: 0, // Elevations are managed explicitly
+          elevation: 0,
           textStyle: textTheme.labelLarge,
         ),
       ),

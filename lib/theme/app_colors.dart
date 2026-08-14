@@ -1,63 +1,62 @@
 import 'package:flutter/material.dart';
 
 /// The core color system for Vistone.
-/// Follows a premium, modern design language.
+/// Image-Based UI Redesign (Soft Pastel)
 class AppColors {
   AppColors._();
 
-  // ── Brand Colors & Palette ────────────────────────────────────────────────
-  static const Color primary = Color(0xFF1F2A1F); // Dark Green (Primary Text/Brand)
-  static const Color secondary = Color(0xFF5E655E); // Warm Grey
-  static const Color accent = Color(0xFFE76F51); // Terracotta
+  // ── Primary Brand Colors ───────────────────────────────────────────────────
+  static const Color primary = Color(0xFF8B5CF6); // Soft Purple (Violet 500)
+  static const Color secondary = Color(0xFFFDBA74); // Soft Peach/Orange
+  static const Color accent = Color(0xFFF472B6); // Soft Pink
   
-  static const Color sageGreen = Color(0xFF7A946F);
-  static const Color oliveGreen = Color(0xFFA7C555);
-  static const Color goldenYellow = Color(0xFFEBC46A);
-
-  // ── Semantic Colors ───────────────────────────────────────────────────────
-  static const Color success = Color(0xFF4F7A5A); // Sage Green Semantic
-  static const Color error = Color(0xFFD65A44); // Soft Red
-  static const Color warning = Color(0xFFE0A23C); // Amber
-  static const Color info = Color(0xFF5B7B8C); // Muted Blue
-
-  // ── Neutral Palette (Border/Dividers) ────────────────────────────────────
-  static const Color border = Color(0xFFE2D6C6); // Sandstone
+  // ── Light Mode (Clean & Bright) ────────────────────────────────────────────
+  static const Color bgLight = Color(0xFFFAFAFA); // Off-white background
+  static const Color surfaceLight = Color(0xFFFFFFFF); // Pure White panels
+  static const Color surfaceAltLight = Color(0xFFF3E8FF); // Very light purple for cards
   
-  // Note: Keeping generic grays for compatibility but shifting them slightly warm
-  static const Color gray25 = Color(0xFFFCFCF9);
-  static const Color gray50 = Color(0xFFFAFAF5);
-  static const Color gray100 = Color(0xFFF7F7F0);
-  static const Color gray150 = Color(0xFFF2F2E8);
-  static const Color gray200 = Color(0xFFEBEBE0);
-  static const Color gray300 = Color(0xFFDDDDD0);
-  static const Color gray400 = Color(0xFFC4C4B5);
-  static const Color gray500 = Color(0xFF9A9A8B);
-  static const Color gray600 = Color(0xFF757566);
-  static const Color gray700 = Color(0xFF4A4A3C);
-  static const Color gray800 = Color(0xFF2C2C22);
-  static const Color gray900 = Color(0xFF11110B);
-
-  // ── Light Theme Backgrounds ───────────────────────────────────────────────
-  static const Color bgLight = Color(0xFFF3ECE3); // Warm Sand
-  static const Color surfaceLight = Color(0xFFFAF6F0); // Cream White
-  static const Color cardLight = Color(0xFFFAF6F0); // Cream White
-  static const Color dialogLight = Color(0xFFFAF6F0); // Cream White
-  static const Color searchBarLight = Color(0xFFFAF6F0); // Using Cream White for elevated
+  static const Color textPrimaryLight = Color(0xFF0F172A); // Dark Navy
+  static const Color textSecondaryLight = Color(0xFF64748B); // Slate Gray
   
-  // ── Elevation Colors ──────────────────────────────────────────────────────
-  static const Color elevation1 = Color(0xFFFAF6F0);
-  static const Color elevation2 = Color(0xFFEFE6DB); // Light Oat
-  static const Color elevation3 = Color(0xFFE2D6C6); // Sandstone
-
-  // ── Dark Theme Colors ─────────────────────────────────────────────────────
-  static const Color bgDark = Color(0xFF0E1116);
-  static const Color surfaceDark = Color(0xFF181C24);
-  static const Color cardDark = Color(0xFF202632);
-  static const Color dialogDark = Color(0xFF202632);
+  static const Color borderLight = Color(0xFFE2E8F0); // Light gray border
+  static const Color borderPurple = Color(0xFFC4B5FD); // Dashed border purple
   
-  static const Color primaryDark = Color(0xFF7CA9FF);
-  static const Color accentDark = Color(0xFFFF9A7A);
+  static const Color success = Color(0xFF10B981);
+  static const Color warning = Color(0xFFF59E0B);
+  static const Color error = Color(0xFFEF4444);
 
-  static const Color textPrimaryDark = Color(0xFFF5F5F5);
-  static const Color textSecondaryDark = Color(0xFFC4C8CE);
+  // ── Dark Mode ──────────────────────────────────────────────────────────────
+  static const Color primaryDark = Color(0xFFA78BFA); // Violet 400
+  static const Color secondaryDark = Color(0xFFFDBA74);
+  static const Color accentDark = Color(0xFFF472B6);
+  
+  static const Color bgDark = Color(0xFF0F172A); // Navy Black
+  static const Color surfaceDark = Color(0xFF1E293B);
+  static const Color surfaceAltDark = Color(0xFF334155);
+  
+  static const Color textPrimaryDark = Color(0xFFF8FAFC);
+  static const Color textSecondaryDark = Color(0xFF94A3B8);
+  
+  static const Color borderDark = Color(0xFF334155);
+  
+  // Legacy mappings for safe compilation
+  static const Color cardLight = surfaceLight;
+  static const Color dialogLight = surfaceLight;
+  static const Color cardDark = surfaceDark;
+  static const Color dialogDark = surfaceDark;
+  static const Color border = borderLight;
+  
+  // Neutral Palette mapping for compatibility
+  static const Color gray50 = surfaceLight;
+  static const Color gray100 = Color(0xFFF1F5F9);
+  static const Color gray200 = borderLight;
+  static const Color gray300 = Color(0xFFCBD5E1);
+  static const Color gray400 = textSecondaryLight;
+  static const Color gray500 = Color(0xFF475569);
+  static const Color gray600 = Color(0xFF334155);
+  static const Color gray700 = borderDark;
+  static const Color gray800 = surfaceDark;
+  static const Color gray900 = bgDark;
+  
+  static const Color sageGreen = success; // Map legacy sageGreen to success
 }
