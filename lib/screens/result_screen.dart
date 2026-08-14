@@ -201,7 +201,7 @@ class ResultScreen extends ConsumerWidget {
                                               width: isSelected ? 16 : 12,
                                               height: isSelected ? 32 : 24,
                                               decoration: BoxDecoration(
-                                                color: result.monkColors[index],
+                                                color: Color(int.parse(result.monkColors[index].replaceAll('#', '0xFF'))),
                                                 borderRadius: BorderRadius.circular(10),
                                                 border: isSelected ? Border.all(color: theme.colorScheme.primary, width: 2) : null,
                                               ),
