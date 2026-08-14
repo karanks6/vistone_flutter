@@ -183,11 +183,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.xxl),
           child: DottedBorder(
-            color: const Color(0xFFBBA7FF),
-            strokeWidth: 2,
-            dashPattern: const [8, 6],
-            borderType: BorderType.RRect,
-            radius: const Radius.circular(AppRadii.xl),
+            options: RoundedRectDottedBorderOptions(
+              color: const Color(0xFFBBA7FF),
+              strokeWidth: 2,
+              dashPattern: const [8, 6],
+              radius: const Radius.circular(AppRadii.xl),
+            ),
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 40, horizontal: AppSpacing.xl),

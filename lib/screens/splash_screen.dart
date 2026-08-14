@@ -48,13 +48,13 @@ class _SplashScreenState extends State<SplashScreen> {
             )
             .fadeIn(duration: 800.ms),
 
-            const SizedBox(height: AppSpacing.s12),
+            const SizedBox(height: AppSpacing.md),
 
             // Subtitle
             Text(
               'Personalized color analysis powered by AI.',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: isDark ? AppColors.gray400 : AppColors.gray500,
+                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
               ),
               textAlign: TextAlign.center,
             )
@@ -68,7 +68,7 @@ class _SplashScreenState extends State<SplashScreen> {
             )
             .fadeIn(duration: 800.ms, delay: 200.ms),
 
-            const SizedBox(height: AppSpacing.s32),
+            const SizedBox(height: AppSpacing.xxxl),
 
             // 5 Color Dots
             Row(
@@ -80,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 const SizedBox(width: 8),
                 _buildDot(const Color(0xFF7B52AB), 2),
                 const SizedBox(width: 8),
-                _buildDot(isDark ? Colors.white : AppColors.textPrimaryLight, 3),
+                _buildDot(isDark ? Colors.white : AppColors.textPrimary, 3),
                 const SizedBox(width: 8),
                 _buildDot(isDark ? AppColors.surfaceDark : Colors.white, 4, true),
               ],
@@ -99,7 +99,7 @@ class _SplashScreenState extends State<SplashScreen> {
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
-        border: hasBorder ? Border.all(color: isDark ? AppColors.borderDark : AppColors.gray200, width: 2) : null,
+        border: hasBorder ? Border.all(color: AppColors.borderDefault, width: 2) : null,
       ),
     )
     .animate()
