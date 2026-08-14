@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../widgets/design_system.dart';
-import '../widgets/botanical_background.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -26,87 +25,90 @@ class _SplashScreenState extends State<SplashScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      body: BotanicalBackground(
-        opacity: isDark ? 0.15 : 0.4,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Logo with Spring Animation
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isDark ? AppColors.gray800 : AppColors.surfaceLight,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.2),
-                      blurRadius: 30,
-                      spreadRadius: 10,
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Image.asset(
-                    'assets/icon/vistone_logo.png',
-                    fit: BoxFit.contain,
-                    color: AppColors.primary,
-                  ),
-                ),
-              )
-              .animate()
-              .scale(
-                duration: 800.ms, 
-                curve: Curves.elasticOut,
-                begin: const Offset(0.5, 0.5),
-              )
-              .fadeIn(duration: 400.ms),
+      backgroundColor: theme.scaffoldBackgroundColor,
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // App Title
+            Text(
+              'Vistone AI',
+              style: theme.textTheme.displayMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: theme.colorScheme.primary,
+                letterSpacing: -1.0,
+              ),
+            )
+            .animate()
+            .slideY(
+              begin: 0.2, 
+              end: 0, 
+              duration: 800.ms, 
+              curve: Curves.easeOutBack,
+            )
+            .fadeIn(duration: 800.ms),
 
-              const SizedBox(height: AppSpacing.s32),
+            const SizedBox(height: AppSpacing.s12),
 
-              // App Title
-              Text(
-                'Vistone AI',
-                style: theme.textTheme.displayMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -1.0,
-                ),
-              )
-              .animate()
-              .slideY(
-                begin: 0.5, 
-                end: 0, 
-                duration: 600.ms, 
-                curve: Curves.easeOutBack,
-                delay: 200.ms
-              )
-              .fadeIn(duration: 600.ms, delay: 200.ms),
+            // Subtitle
+            Text(
+              'Personalized color analysis powered by AI.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: isDark ? AppColors.gray400 : AppColors.gray500,
+              ),
+              textAlign: TextAlign.center,
+            )
+            .animate()
+            .slideY(
+              begin: 0.2, 
+              end: 0, 
+              duration: 800.ms, 
+              curve: Curves.easeOutBack,
+              delay: 200.ms
+            )
+            .fadeIn(duration: 800.ms, delay: 200.ms),
 
-              const SizedBox(height: AppSpacing.s12),
+            const SizedBox(height: AppSpacing.s32),
 
-              // Subtitle
-              Text(
-                'Discover your true colors.',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: isDark ? AppColors.gray400 : AppColors.gray600,
-                ),
-                textAlign: TextAlign.center,
-              )
-              .animate()
-              .slideY(
-                begin: 0.5, 
-                end: 0, 
-                duration: 600.ms, 
-                curve: Curves.easeOutBack,
-                delay: 300.ms
-              )
-              .fadeIn(duration: 600.ms, delay: 300.ms),
-            ],
-          ),
+            // 5 Color Dots
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildDot(const Color(0xFFFFB5E8), 0),
+                const SizedBox(width: 8),
+                _buildDot(const Color(0xFFB28DFF), 1),
+                const SizedBox(width: 8),
+                _buildDot(const Color(0xFF7B52AB), 2),
+                const SizedBox(width: 8),
+                _buildDot(isDark ? Colors.white : AppColors.textPrimaryLight, 3),
+                const SizedBox(width: 8),
+                _buildDot(isDark ? AppColors.surfaceDark : Colors.white, 4, true),
+              ],
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  Widget _buildDot(Color color, int index, [bool hasBorder = false]) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      width: 16,
+      height: 16,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: hasBorder ? Border.all(color: isDark ? AppColors.borderDark : AppColors.gray200, width: 2) : null,
+      ),
+    )
+    .animate()
+    .scale(
+      begin: const Offset(0, 0),
+      duration: 500.ms,
+      curve: Curves.easeOutBack,
+      delay: (400 + index * 100).ms,
+    )
+    .fadeIn(duration: 500.ms, delay: (400 + index * 100).ms);
   }
 }
