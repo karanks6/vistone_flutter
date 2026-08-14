@@ -20,7 +20,7 @@ class AppTypography {
       ),
       displayMedium: GoogleFonts.poppins(
         fontSize: 36,
-        fontWeight: FontWeight.w700,
+        fontWeight: FontWeight.w800,
         height: 1.2,
         letterSpacing: -1.0,
         color: displayColor,

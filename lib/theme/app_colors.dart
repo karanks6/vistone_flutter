@@ -11,11 +11,11 @@ class AppColors {
   static const Color accent = Color(0xFFF472B6); // Soft Pink
   
   // ── Light Mode (Clean & Bright) ────────────────────────────────────────────
-  static const Color bgLight = Color(0xFFFAFAFA); // Off-white background
+  static const Color bgLight = Color(0xFFFAF9FF); // Off-white with faint purple tint
   static const Color surfaceLight = Color(0xFFFFFFFF); // Pure White panels
   static const Color surfaceAltLight = Color(0xFFF3E8FF); // Very light purple for cards
   
-  static const Color textPrimaryLight = Color(0xFF0F172A); // Dark Navy
+  static const Color textPrimaryLight = Color(0xFF151034); // Very Dark Navy (for "Vistone")
   static const Color textSecondaryLight = Color(0xFF64748B); // Slate Gray
   
   static const Color borderLight = Color(0xFFE2E8F0); // Light gray border
@@ -48,7 +48,7 @@ class AppColors {
   
   // Neutral Palette mapping for compatibility
   static const Color gray50 = surfaceLight;
-  static const Color gray100 = Color(0xFFF1F5F9);
+  static const Color gray100 = Color(0xFFF8FAFC); // Lighter gray for How It Works container
   static const Color gray200 = borderLight;
   static const Color gray300 = Color(0xFFCBD5E1);
   static const Color gray400 = textSecondaryLight;
