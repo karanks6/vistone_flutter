@@ -63,11 +63,11 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 150),
-      reverseDuration: const Duration(milliseconds: 150),
+      duration: const Duration(milliseconds: 250),
+      reverseDuration: const Duration(milliseconds: 250),
     );
-    // Base scale is 1.0. Hover: 1.01. Pressed: 0.98.
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
+    // Playful scale: Base 1.0. Hover: 1.02. Pressed: 0.96.
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
     );
   }
@@ -200,7 +200,7 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
         // Apply hover scale if not pressed, pressed scale if pressed.
         double scale = _scaleAnimation.value;
         if (scale == 1.0 && _isHovered && !isDisabled) {
-          scale = 1.01;
+          scale = 1.02; // Playful slight pop on hover
         }
         return Transform.scale(
           scale: scale,

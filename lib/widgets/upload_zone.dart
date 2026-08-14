@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'design_system.dart';
 
 class UploadZone extends StatefulWidget {
@@ -13,10 +15,22 @@ class UploadZone extends StatefulWidget {
   State<UploadZone> createState() => _UploadZoneState();
 }
 
-class _UploadZoneState extends State<UploadZone> {
+class _UploadZoneState extends State<UploadZone> with SingleTickerProviderStateMixin {
   final _picker = ImagePicker();
   bool _isHovering = false;
-  bool _isPressed = false;
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   Future<void> _pickImage(ImageSource source) async {
     final picked = await _picker.pickImage(
@@ -35,46 +49,60 @@ class _UploadZoneState extends State<UploadZone> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: theme.dialogTheme.backgroundColor ?? theme.colorScheme.surface,
-      shape: RoundedRectangleBorder(borderRadius: AppShapes.bottomSheet),
-      builder: (_) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s24, vertical: AppSpacing.s32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: AppSpacing.s32),
-                decoration: BoxDecoration(
-                  color: isDark ? AppColors.gray700 : AppColors.gray300,
-                  borderRadius: BorderRadius.circular(2),
+      backgroundColor: Colors.transparent,
+      builder: (_) => Container(
+        decoration: BoxDecoration(
+          color: theme.dialogTheme.backgroundColor ?? theme.colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 20,
+              spreadRadius: 5,
+            )
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s24, vertical: AppSpacing.s32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 48,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: AppSpacing.s32),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.gray700 : AppColors.gray300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-              ),
-              Text(
-                'Upload Photo',
-                style: theme.textTheme.titleLarge,
-              ),
-              const SizedBox(height: AppSpacing.s32),
-              _SheetOption(
-                icon: Symbols.camera,
-                label: 'Take a Photo',
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(ImageSource.camera);
-                },
-              ),
-              const SizedBox(height: AppSpacing.s12),
-              _SheetOption(
-                icon: Symbols.photo_library,
-                label: 'Choose from Gallery',
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(ImageSource.gallery);
-                },
-              ),
-            ],
+                Text(
+                  'Upload Photo',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.s32),
+                _SheetOption(
+                  icon: Symbols.camera,
+                  label: 'Take a Photo',
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickImage(ImageSource.camera);
+                  },
+                ).animate().slideX(begin: -0.1, duration: 400.ms, curve: Curves.easeOutQuad).fadeIn(),
+                const SizedBox(height: AppSpacing.s12),
+                _SheetOption(
+                  icon: Symbols.photo_library,
+                  label: 'Choose from Gallery',
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickImage(ImageSource.gallery);
+                  },
+                ).animate().slideX(begin: -0.1, duration: 400.ms, delay: 100.ms, curve: Curves.easeOutQuad).fadeIn(),
+              ],
+            ),
           ),
         ),
       ),
@@ -86,69 +114,124 @@ class _UploadZoneState extends State<UploadZone> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    // Subtle scaling for press effect
-    final double scale = _isPressed ? 0.98 : (_isHovering ? 1.01 : 1.0);
-    
-    final borderColor = isDark ? AppColors.gray700 : AppColors.gray300;
-    final hoverBorderColor = theme.colorScheme.primary;
-    final bgColor = _isHovering 
-        ? (isDark ? AppColors.gray800 : AppColors.gray100)
-        : Colors.transparent;
+    final bgColor = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
+    final borderColor = isDark ? AppColors.borderDark : AppColors.borderPurple;
 
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovering = true),
-      onExit: (_) => setState(() => _isHovering = false),
+      onEnter: (_) {
+        setState(() => _isHovering = true);
+        _controller.forward();
+      },
+      onExit: (_) {
+        setState(() => _isHovering = false);
+        _controller.reverse();
+      },
       child: GestureDetector(
-        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapDown: (_) => _controller.forward(),
         onTapUp: (_) {
-          setState(() => _isPressed = false);
+          _controller.reverse();
           _showSourceSheet(context);
         },
-        onTapCancel: () => setState(() => _isPressed = false),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOutCubic,
-          transform: Matrix4.identity()..scale(scale, scale),
-          transformAlignment: Alignment.center,
-          height: 240,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: AppShapes.card,
-            border: Border.all(
-              color: _isHovering ? hoverBorderColor : borderColor,
-              width: _isHovering ? 2.0 : 1.0,
+        onTapCancel: () => _controller.reverse(),
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            // Spring scale effect
+            final scale = 1.0 - (_controller.value * 0.02);
+            return Transform.scale(
+              scale: scale,
+              child: child,
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: isDark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                )
+              ],
             ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  color: isDark ? AppColors.gray800 : AppColors.gray100,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Symbols.add_photo_alternate,
-                  color: theme.colorScheme.primary,
-                  size: 28,
+            child: DottedBorder(
+              options: RoundedRectDottedBorderOptions(
+                radius: const Radius.circular(24),
+                color: borderColor,
+                strokeWidth: 1.5,
+                dashPattern: const [8, 6],
+                padding: EdgeInsets.zero,
+              ),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 40),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Cloud Icon Button
+                    Container(
+                      width: 72,
+                      height: 72,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.colorScheme.primary.withValues(alpha: 0.4),
+                            blurRadius: 16,
+                            spreadRadius: 2,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: const Icon(
+                        Symbols.cloud_upload,
+                        color: Colors.white,
+                        size: 32,
+                      ),
+                    ).animate(target: _isHovering ? 1 : 0).scaleXY(end: 1.05, duration: 200.ms),
+                    
+                    const SizedBox(height: 24),
+                    
+                    Text(
+                      'Upload your photo',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: theme.textTheme.bodyLarge?.color,
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 8),
+                    
+                    Text(
+                      'JPG, PNG or WebP',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 16),
+                    
+                    // Badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'Max 10MB',
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: AppSpacing.s24),
-              Text(
-                'Upload your photo',
-                style: theme.textTheme.titleMedium,
-              ),
-              const SizedBox(height: AppSpacing.s8),
-              Text(
-                'JPG, PNG or WebP',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -172,17 +255,46 @@ class _SheetOption extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return ListTile(
-      onTap: onTap,
-      shape: RoundedRectangleBorder(borderRadius: AppShapes.button),
-      tileColor: isDark ? AppColors.gray800 : AppColors.gray100,
-      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.s20, vertical: AppSpacing.s4),
-      leading: Icon(icon, color: theme.colorScheme.primary),
-      title: Text(
-        label,
-        style: theme.textTheme.titleMedium?.copyWith(fontSize: 16),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        splashColor: theme.colorScheme.primary.withValues(alpha: 0.1),
+        highlightColor: theme.colorScheme.primary.withValues(alpha: 0.05),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s20, vertical: AppSpacing.s16),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.gray800 : AppColors.gray50,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isDark ? AppColors.gray700 : AppColors.gray200,
+            )
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: theme.colorScheme.primary, size: 24),
+              ),
+              const SizedBox(width: AppSpacing.s16),
+              Expanded(
+                child: Text(
+                  label,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              Icon(Symbols.chevron_right, color: isDark ? AppColors.gray600 : AppColors.gray400),
+            ],
+          ),
+        ),
       ),
-      trailing: Icon(Symbols.chevron_right, color: isDark ? AppColors.gray600 : AppColors.gray400),
     );
   }
 }
