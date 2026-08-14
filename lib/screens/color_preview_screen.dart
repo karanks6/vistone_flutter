@@ -1,7 +1,7 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import '../models/color_swatch.dart' as models;
 import '../widgets/design_system.dart';
 
@@ -32,7 +32,6 @@ class ColorPreviewScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Full-screen color background
           Container(
             color: color,
             width: double.infinity,
@@ -42,19 +41,18 @@ class ColorPreviewScreen extends StatelessWidget {
           SafeArea(
             child: Column(
               children: [
-                // Back button
                 Align(
                   alignment: Alignment.topLeft,
                   child: Padding(
-                    padding: const EdgeInsets.all(AppSpacing.s8),
+                    padding: const EdgeInsets.all(AppSpacing.md),
                     child: IconButton(
                       icon: Container(
-                        padding: const EdgeInsets.all(AppSpacing.s8),
+                        padding: const EdgeInsets.all(AppSpacing.sm),
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.15),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Symbols.arrow_back, color: onColor, size: 24),
+                        child: Icon(LucideIcons.arrowLeft, color: onColor, size: 24),
                       ),
                       onPressed: () => context.pop(),
                     ),
@@ -64,7 +62,7 @@ class ColorPreviewScreen extends StatelessWidget {
                 const Spacer(),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s32),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxl),
                   child: Column(
                     children: [
                       Text(
@@ -74,7 +72,7 @@ class ColorPreviewScreen extends StatelessWidget {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: AppSpacing.s12),
+                      const SizedBox(height: AppSpacing.lg),
                       GestureDetector(
                         onTap: () async {
                           await FlutterClipboard.copy(swatch.hex);
@@ -87,10 +85,10 @@ class ColorPreviewScreen extends StatelessWidget {
                           }
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s20, vertical: AppSpacing.s8),
+                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.sm),
                           decoration: BoxDecoration(
                             color: Colors.black.withValues(alpha: 0.1),
-                            borderRadius: AppShapes.chip,
+                            borderRadius: BorderRadius.circular(AppRadii.pill),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -102,13 +100,13 @@ class ColorPreviewScreen extends StatelessWidget {
                                   fontFamily: 'monospace',
                                 ),
                               ),
-                              const SizedBox(width: AppSpacing.s12),
-                              Icon(Symbols.content_copy, color: onColor.withValues(alpha: 0.7), size: 18),
+                              const SizedBox(width: AppSpacing.lg),
+                              Icon(LucideIcons.copy, color: onColor.withValues(alpha: 0.7), size: 18),
                             ],
                           ),
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.s32),
+                      const SizedBox(height: AppSpacing.xxxl),
                       Text(
                         isAvoid
                             ? 'This color may clash with ${undertone.toLowerCase()} undertones and wash out your complexion.'
@@ -123,7 +121,7 @@ class ColorPreviewScreen extends StatelessWidget {
                 ),
 
                 const Spacer(),
-                const SizedBox(height: AppSpacing.s48),
+                const SizedBox(height: 48),
               ],
             ),
           ),

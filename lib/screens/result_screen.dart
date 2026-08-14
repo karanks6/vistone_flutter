@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../providers/analysis_provider.dart';
 import '../widgets/design_system.dart';
@@ -15,11 +15,9 @@ class ResultScreen extends ConsumerWidget {
     final state = ref.watch(analysisProvider);
     final selectedImage = ref.watch(selectedImageProvider);
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     if (state is! AnalysisSuccess) {
       return Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
         body: Center(
           child: CircularProgressIndicator(color: theme.colorScheme.primary),
         ),
@@ -29,84 +27,85 @@ class ResultScreen extends ConsumerWidget {
     final result = state.result;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
-            // AppBar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s20, vertical: AppSpacing.s12),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.lg),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _CircleIconBtn(
-                    icon: Symbols.chevron_left,
+                    icon: LucideIcons.chevronLeft,
                     onTap: () => context.go('/home'),
                   ),
                   _CircleIconBtn(
-                    icon: Symbols.share,
+                    icon: LucideIcons.share,
                     onTap: () {},
                   ),
                 ],
               ),
             ),
             
-            // Content
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s24),
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Split Header Layout
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Left: Image
                         Expanded(
                           flex: 4,
-                          child: Stack(
-                            alignment: Alignment.bottomCenter,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(24),
-                                child: selectedImage != null
-                                    ? Image.file(
-                                        selectedImage,
-                                        fit: BoxFit.cover,
-                                        height: 300,
-                                        width: double.infinity,
-                                      )
-                                    : Container(height: 300, color: AppColors.gray200),
-                              ),
-                              Positioned(
-                                bottom: 12,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withValues(alpha: 0.6),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: const Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Symbols.check_circle, color: Colors.white, size: 14),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        'Analysis Completed',
-                                        style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(AppRadii.hero),
+                              boxShadow: AppShadows.card,
+                            ),
+                            child: Stack(
+                              alignment: Alignment.bottomCenter,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(AppRadii.hero),
+                                  child: selectedImage != null
+                                      ? Image.file(
+                                          selectedImage,
+                                          fit: BoxFit.cover,
+                                          height: 300,
+                                          width: double.infinity,
+                                        )
+                                      : Container(height: 300, color: const Color(0xFFF1F5F9)),
+                                ),
+                                Positioned(
+                                  bottom: AppSpacing.md,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withValues(alpha: 0.6),
+                                      borderRadius: BorderRadius.circular(AppRadii.pill),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(LucideIcons.checkCircle2, color: Colors.white, size: 14),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          'Analysis Completed',
+                                          style: theme.textTheme.labelSmall?.copyWith(color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ).animate().fadeIn().slideY(begin: 0.1, duration: 500.ms, curve: Curves.easeOutQuad),
+                              ],
+                            ),
+                          ).animate().fadeIn().slideY(begin: 0.1, duration: AppMotion.normal),
                         ),
                         
-                        const SizedBox(width: AppSpacing.s16),
+                        const SizedBox(width: AppSpacing.xl),
                         
-                        // Right: Skin Tone Details
                         Expanded(
                           flex: 5,
                           child: Column(
@@ -115,77 +114,58 @@ class ResultScreen extends ConsumerWidget {
                               Text(
                                 'Your Skin Tone',
                                 style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: isDark ? AppColors.gray400 : AppColors.gray500,
+                                  color: AppColors.textSecondary,
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 'Monk ${result.tone}',
-                                style: theme.textTheme.headlineMedium?.copyWith(
-                                  fontWeight: FontWeight.w800,
-                                  color: isDark ? Colors.white : AppColors.textPrimaryLight,
-                                ),
+                                style: theme.textTheme.displayLarge,
                               ),
                               const SizedBox(height: 8),
                               
-                              // Undertone Badge
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 6),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFDCFCE7).withValues(alpha: isDark ? 0.2 : 0.5), // Soft green
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: const Color(0xFF16A34A).withValues(alpha: 0.3)),
+                                  color: AppColors.successSoft,
+                                  borderRadius: BorderRadius.circular(AppRadii.pill),
+                                  border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Symbols.eco, color: Color(0xFF16A34A), size: 14),
+                                    const Icon(LucideIcons.leaf, color: AppColors.success, size: 14),
                                     const SizedBox(width: 4),
                                     Text(
                                       '${result.undertone} Undertone',
                                       style: theme.textTheme.labelSmall?.copyWith(
-                                        color: const Color(0xFF16A34A),
-                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.success,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
                               
-                              const SizedBox(height: AppSpacing.s16),
+                              const SizedBox(height: AppSpacing.xl),
                               
-                              // Monk Scale Mini Card
-                              Container(
-                                padding: const EdgeInsets.all(AppSpacing.s12),
-                                decoration: BoxDecoration(
-                                  color: isDark ? AppColors.surfaceAltDark : Colors.white,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.02),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    )
-                                  ]
-                                ),
+                              AppCard(
+                                padding: const EdgeInsets.all(AppSpacing.md),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       'MONK SCALE',
                                       style: theme.textTheme.labelSmall?.copyWith(
-                                        fontWeight: FontWeight.w800,
                                         letterSpacing: 1,
-                                        color: isDark ? AppColors.gray400 : AppColors.gray500,
+                                        color: AppColors.textDisabled,
                                       ),
                                     ),
                                     const SizedBox(height: 8),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text('1 (Lightest)', style: TextStyle(fontSize: 8, color: isDark ? AppColors.gray500 : AppColors.gray400)),
-                                        Text('10 (Deepest)', style: TextStyle(fontSize: 8, color: isDark ? AppColors.gray500 : AppColors.gray400)),
+                                        Text('1 (Lightest)', style: theme.textTheme.bodySmall?.copyWith(fontSize: 8, color: AppColors.textDisabled)),
+                                        Text('10 (Deepest)', style: theme.textTheme.bodySmall?.copyWith(fontSize: 8, color: AppColors.textDisabled)),
                                       ],
                                     ),
                                     const SizedBox(height: 4),
@@ -197,13 +177,22 @@ class ResultScreen extends ConsumerWidget {
                                           clipBehavior: Clip.none,
                                           alignment: Alignment.center,
                                           children: [
+                                            if (isSelected)
+                                              Container(
+                                                width: 24,
+                                                height: 40,
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.lavenderTint,
+                                                  borderRadius: BorderRadius.circular(12),
+                                                ),
+                                              ),
                                             Container(
                                               width: isSelected ? 16 : 12,
                                               height: isSelected ? 32 : 24,
                                               decoration: BoxDecoration(
                                                 color: Color(int.parse(result.monkColors[index].replaceAll('#', '0xFF'))),
                                                 borderRadius: BorderRadius.circular(10),
-                                                border: isSelected ? Border.all(color: theme.colorScheme.primary, width: 2) : null,
+                                                border: isSelected ? Border.all(color: AppColors.primary, width: 2) : null,
                                               ),
                                             ),
                                             if (isSelected)
@@ -211,8 +200,8 @@ class ResultScreen extends ConsumerWidget {
                                                 bottom: -16,
                                                 child: Container(
                                                   padding: const EdgeInsets.all(4),
-                                                  decoration: BoxDecoration(
-                                                    color: theme.colorScheme.primary,
+                                                  decoration: const BoxDecoration(
+                                                    color: AppColors.primary,
                                                     shape: BoxShape.circle,
                                                   ),
                                                   child: Text(
@@ -230,40 +219,31 @@ class ResultScreen extends ConsumerWidget {
                                 ),
                               ),
                               
-                              const SizedBox(height: AppSpacing.s16),
+                              const SizedBox(height: AppSpacing.xl),
                               
-                              // Confidence Scores
-                              _ConfidenceBar(label: 'Tone Confidence', percent: result.toneConfidence, color: theme.colorScheme.primary),
-                              const SizedBox(height: AppSpacing.s12),
-                              _ConfidenceBar(label: 'Undertone Confidence', percent: result.utConfidence, color: const Color(0xFF16A34A)),
+                              _ConfidenceBar(label: 'Tone Confidence', percent: result.toneConfidence, color: AppColors.primary),
+                              const SizedBox(height: AppSpacing.md),
+                              _ConfidenceBar(label: 'Undertone Confidence', percent: result.utConfidence, color: AppColors.success),
                               
                             ],
-                          ).animate().fadeIn(delay: 200.ms).slideX(begin: 0.1, duration: 500.ms, curve: Curves.easeOutQuad),
+                          ).animate().fadeIn(delay: 200.ms).slideX(begin: 0.1, duration: AppMotion.normal),
                         ),
                       ],
                     ),
                     
-                    const SizedBox(height: AppSpacing.s24),
+                    const SizedBox(height: AppSpacing.section),
                     
-                    // Great News Banner
-                    Container(
-                      padding: const EdgeInsets.all(AppSpacing.s20),
-                      decoration: BoxDecoration(
-                        color: isDark ? AppColors.surfaceAltDark : const Color(0xFFF5F3FF),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.2)),
-                      ),
+                    AppCard(
+                      padding: const EdgeInsets.all(AppSpacing.xxl),
+                      backgroundColor: const Color(0xFFF5F3FF),
                       child: Row(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primary,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(Symbols.auto_awesome, color: Colors.white, size: 24),
+                          const IconContainer(
+                            icon: LucideIcons.sparkles,
+                            backgroundColor: AppColors.primary,
+                            iconColor: Colors.white,
                           ),
-                          const SizedBox(width: AppSpacing.s16),
+                          const SizedBox(width: AppSpacing.lg),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,16 +251,14 @@ class ResultScreen extends ConsumerWidget {
                                 Text(
                                   'Great News!',
                                   style: theme.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: theme.colorScheme.primary,
+                                    color: AppColors.primary,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
+                                const SizedBox(height: AppSpacing.xs),
                                 Text(
                                   'You have a balanced ${result.undertone.toLowerCase()} undertone. You can pull off a wide range of colors.',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: isDark ? AppColors.gray400 : AppColors.textPrimaryLight,
-                                    height: 1.4,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.textPrimary,
                                   ),
                                 ),
                               ],
@@ -288,163 +266,73 @@ class ResultScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                    ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1, duration: 500.ms),
+                    ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1),
                     
-                    const SizedBox(height: AppSpacing.s40),
+                    const SizedBox(height: AppSpacing.section),
                     
-                    // Best Colors
-                    _SectionHeader(title: 'Your Best Colors', icon: Symbols.auto_awesome),
-                    const SizedBox(height: AppSpacing.s16),
+                    _SectionHeader(title: 'Your Best Colors', icon: LucideIcons.sparkles),
+                    const SizedBox(height: AppSpacing.xl),
                     SizedBox(
                       height: 180,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
                         clipBehavior: Clip.none,
                         itemCount: result.bestColors.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.s16),
-                        itemBuilder: (context, i) => SizedBox(
-                          width: 140,
-                          child: ColorSwatchCard(
-                            swatch: result.bestColors[i],
-                            onTap: () => context.push(
-                              '/color-preview',
-                              extra: {
-                                'swatch': result.bestColors[i],
-                                'isAvoid': false,
-                                'undertone': result.undertone,
-                              },
-                            ),
+                        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.lg),
+                        itemBuilder: (context, i) => ColorSwatchCard(
+                          swatch: result.bestColors[i],
+                          onTap: () => context.push(
+                            '/color-preview',
+                            extra: {
+                              'swatch': result.bestColors[i],
+                              'isAvoid': false,
+                              'undertone': result.undertone,
+                            },
                           ),
                         ).animate().scaleXY(begin: 0.9, duration: 400.ms, delay: (500 + i*50).ms).fadeIn(),
                       ),
                     ),
                     
-                    const SizedBox(height: AppSpacing.s40),
+                    const SizedBox(height: AppSpacing.section),
                     
-                    // Colors to Avoid
-                    _SectionHeader(title: 'Colors to Avoid', icon: Symbols.block),
-                    const SizedBox(height: AppSpacing.s16),
+                    _SectionHeader(title: 'Colors to Avoid', icon: LucideIcons.ban),
+                    const SizedBox(height: AppSpacing.xl),
                     SizedBox(
                       height: 180,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
                         clipBehavior: Clip.none,
                         itemCount: result.avoidColors.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.s16),
-                        itemBuilder: (context, i) => SizedBox(
-                          width: 140,
-                          child: ColorSwatchCard(
-                            swatch: result.avoidColors[i],
-                            isAvoid: true,
-                            onTap: () => context.push(
-                              '/color-preview',
-                              extra: {
-                                'swatch': result.avoidColors[i],
-                                'isAvoid': true,
-                                'undertone': result.undertone,
-                              },
-                            ),
+                        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.lg),
+                        itemBuilder: (context, i) => ColorSwatchCard(
+                          swatch: result.avoidColors[i],
+                          isAvoid: true,
+                          onTap: () => context.push(
+                            '/color-preview',
+                            extra: {
+                              'swatch': result.avoidColors[i],
+                              'isAvoid': true,
+                              'undertone': result.undertone,
+                            },
                           ),
                         ).animate().scaleXY(begin: 0.9, duration: 400.ms, delay: (700 + i*50).ms).fadeIn(),
                       ),
                     ),
                     
-                    const SizedBox(height: AppSpacing.s40),
+                    const SizedBox(height: AppSpacing.section),
                     
-                    // Analyze Another Photo Button
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFF9070D9), // Dark Purple
-                            Color(0xFFB19CD9), // Light Purple
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF9070D9).withValues(alpha: 0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          )
-                        ],
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          ref.read(analysisProvider.notifier).reset();
-                          context.go('/home');
-                        },
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Symbols.photo_camera, color: Colors.white, size: 24),
-                            SizedBox(width: 8),
-                            Text(
-                              'Analyze Another Photo',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    AppPrimaryButton(
+                      label: 'Analyze Another Photo',
+                      icon: LucideIcons.camera,
+                      onPressed: () {
+                        ref.read(analysisProvider.notifier).reset();
+                        context.go('/home');
+                      },
                     ),
                     
-                    const SizedBox(height: AppSpacing.s24),
-                    
-                    // Tip Card
-                    Container(
-                      padding: const EdgeInsets.all(AppSpacing.s20),
-                      decoration: BoxDecoration(
-                        color: isDark ? AppColors.surfaceAltDark : const Color(0xFFF8FAFC),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(Symbols.lightbulb, color: theme.colorScheme.primary, size: 24),
-                          ),
-                          const SizedBox(width: AppSpacing.s16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Tip',
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: isDark ? Colors.white : AppColors.textPrimaryLight,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Natural light gives the most accurate results. Try near a window for best analysis.',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: isDark ? AppColors.gray400 : AppColors.gray600,
-                                    height: 1.4,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.s8),
-                          Icon(Symbols.chevron_right, color: isDark ? AppColors.gray500 : AppColors.gray400),
-                        ],
-                      ),
-                    ),
-                    
-                    const SizedBox(height: AppSpacing.s40),
+                    const SizedBox(height: AppSpacing.xxl),
                   ],
                 ),
               ),
@@ -464,27 +352,22 @@ class _CircleIconBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isDark ? AppColors.surfaceAltDark : Colors.white,
-          shape: BoxShape.circle,
-          border: Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight, width: 0.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.borderDefault, width: 1),
+        boxShadow: AppShadows.card,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(22),
+          child: Icon(icon, size: 20, color: AppColors.textPrimary),
         ),
-        child: Icon(icon, size: 20, color: isDark ? Colors.white : AppColors.textPrimaryLight),
       ),
     );
   }
@@ -504,7 +387,6 @@ class _ConfidenceBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final int pctString = (percent * 100).round();
 
     return Column(
@@ -512,13 +394,12 @@ class _ConfidenceBar extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(Symbols.auto_awesome, color: color, size: 14),
+            Icon(LucideIcons.sparkles, color: color, size: 14),
             const SizedBox(width: 4),
             Text(
               label,
               style: theme.textTheme.labelSmall?.copyWith(
-                color: isDark ? AppColors.gray400 : AppColors.gray600,
-                fontWeight: FontWeight.w600,
+                color: AppColors.textSecondary,
               ),
             ),
             const Spacer(),
@@ -526,7 +407,6 @@ class _ConfidenceBar extends StatelessWidget {
               '$pctString%',
               style: theme.textTheme.labelSmall?.copyWith(
                 color: color,
-                fontWeight: FontWeight.w800,
               ),
             ),
           ],
@@ -536,7 +416,7 @@ class _ConfidenceBar extends StatelessWidget {
           height: 6,
           width: double.infinity,
           decoration: BoxDecoration(
-            color: isDark ? AppColors.gray800 : AppColors.gray200,
+            color: const Color(0xFFE2E8F0),
             borderRadius: BorderRadius.circular(3),
           ),
           child: LayoutBuilder(
@@ -549,7 +429,7 @@ class _ConfidenceBar extends StatelessWidget {
                       color: color,
                       borderRadius: BorderRadius.circular(3),
                     ),
-                  ).animate().scaleX(begin: 0, alignment: Alignment.centerLeft, duration: 800.ms, curve: Curves.easeOutCubic),
+                  ).animate().scaleX(begin: 0, alignment: Alignment.centerLeft, duration: 900.ms, curve: Curves.easeOutCubic),
                 ],
               );
             },
@@ -569,29 +449,24 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           children: [
-            Icon(icon, size: 20, color: theme.colorScheme.primary),
+            Icon(icon, size: 20, color: AppColors.primary),
             const SizedBox(width: 8),
             Text(
               title,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w800,
-                color: isDark ? Colors.white : AppColors.textPrimaryLight,
-              ),
+              style: theme.textTheme.titleMedium,
             ),
           ],
         ),
         Text(
           'VIEW ALL',
           style: theme.textTheme.labelSmall?.copyWith(
-            fontWeight: FontWeight.w700,
-            color: theme.colorScheme.primary,
+            color: AppColors.primary,
           ),
         ),
       ],

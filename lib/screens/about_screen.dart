@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:material_symbols_icons/symbols.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../widgets/design_system.dart';
 
@@ -10,16 +10,13 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
-            // Custom AppBar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s20, vertical: AppSpacing.s12),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.lg),
               child: Row(
                 children: [
                   InkWell(
@@ -28,9 +25,9 @@ class AboutScreen extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: isDark ? AppColors.surfaceAltDark : AppColors.surfaceLight,
+                        color: Colors.white,
                         shape: BoxShape.circle,
-                        border: Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight, width: 0.5),
+                        border: Border.all(color: AppColors.borderDefault, width: 0.5),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.02),
@@ -39,34 +36,31 @@ class AboutScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Icon(Symbols.chevron_left, size: 20, color: isDark ? Colors.white : AppColors.textPrimaryLight),
+                      child: const Icon(LucideIcons.chevronLeft, size: 20, color: AppColors.textPrimary),
                     ),
                   ),
                   Expanded(
                     child: Center(
                       child: Text(
                         'About Vistone AI',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          color: isDark ? Colors.white : AppColors.textPrimaryLight,
-                        ),
+                        style: theme.textTheme.titleMedium,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 40), // Balance the back button
+                  const SizedBox(width: 40),
                 ],
               ),
             ),
             
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s24, vertical: AppSpacing.s16),
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.lg),
                 child: Column(
                   children: [
-                    // Hero
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(AppSpacing.s32),
+                      padding: const EdgeInsets.all(AppSpacing.xxxl),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           begin: Alignment.topLeft,
@@ -76,14 +70,8 @@ class AboutScreen extends StatelessWidget {
                             Color(0xFFB19CD9), // Light Purple
                           ],
                         ),
-                        borderRadius: BorderRadius.circular(32),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF9070D9).withValues(alpha: 0.3),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          )
-                        ],
+                        borderRadius: BorderRadius.circular(AppRadii.hero),
+                        boxShadow: AppShadows.card,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,18 +82,17 @@ class AboutScreen extends StatelessWidget {
                               color: Colors.white.withValues(alpha: 0.2),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Symbols.auto_awesome, color: Colors.white, size: 32),
+                            child: const Icon(LucideIcons.sparkles, color: Colors.white, size: 32),
                           ),
-                          const SizedBox(height: AppSpacing.s24),
+                          const SizedBox(height: AppSpacing.xxl),
                           Text(
                             'Vistone AI',
                             style: theme.textTheme.displaySmall?.copyWith(
-                              fontWeight: FontWeight.w800,
                               color: Colors.white,
                               letterSpacing: -1.0,
                             ),
                           ),
-                          const SizedBox(height: AppSpacing.s8),
+                          const SizedBox(height: AppSpacing.sm),
                           Text(
                             'See the colors that bring out your best.',
                             style: theme.textTheme.bodyLarge?.copyWith(
@@ -114,87 +101,49 @@ class AboutScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.1, duration: 600.ms, curve: Curves.easeOutCubic),
+                    ).animate().fadeIn(duration: AppMotion.normal).slideY(begin: 0.1),
 
-                    const SizedBox(height: AppSpacing.s32),
+                    const SizedBox(height: AppSpacing.section),
 
                     _InfoCard(
-                      icon: Symbols.target,
+                      icon: LucideIcons.target,
                       title: 'What is Vistone AI?',
-                      body:
-                          'Vistone AI is an AI-powered personal color analysis tool. It uses advanced computer vision to analyze your skin tone from a selfie and recommend clothing colors that scientifically complement your complexion.',
+                      body: 'Vistone AI is an AI-powered personal color analysis tool. It uses advanced computer vision to analyze your skin tone from a selfie and recommend clothing colors that scientifically complement your complexion.',
                     ).animate().fadeIn(delay: 200.ms).slideX(begin: 0.1),
 
-                    const SizedBox(height: AppSpacing.s16),
+                    const SizedBox(height: AppSpacing.lg),
 
                     _InfoCard(
-                      icon: Symbols.science,
+                      icon: LucideIcons.microscope,
                       title: 'The Google Monk Scale',
-                      body:
-                          'Vistone AI classifies skin tones using the Google Monk Skin Tone Scale — a 10-shade scale developed to provide broader, more inclusive skin tone representation.',
+                      body: 'Vistone AI classifies skin tones using the Google Monk Skin Tone Scale — a 10-shade scale developed to provide broader, more inclusive skin tone representation.',
                     ).animate().fadeIn(delay: 300.ms).slideX(begin: 0.1),
 
-                    const SizedBox(height: AppSpacing.s16),
+                    const SizedBox(height: AppSpacing.lg),
 
                     _InfoCard(
-                      icon: Symbols.robot_2,
+                      icon: LucideIcons.cpu,
                       title: 'How the AI Works',
-                      body:
-                          'MediaPipe Face Mesh detects facial landmarks. The algorithm samples skin pixels from your upper cheeks, forehead, and nose. Two color correction steps normalize the lighting before classification.',
+                      body: 'MediaPipe Face Mesh detects facial landmarks. The algorithm samples skin pixels from your upper cheeks, forehead, and nose. Two color correction steps normalize the lighting before classification.',
                     ).animate().fadeIn(delay: 400.ms).slideX(begin: 0.1),
 
-                    const SizedBox(height: AppSpacing.s16),
+                    const SizedBox(height: AppSpacing.lg),
 
                     _InfoCard(
-                      icon: Symbols.palette,
+                      icon: LucideIcons.palette,
                       title: 'Seasonal Color Analysis',
-                      body:
-                          'Your Monk tone and undertone (Cool/Warm/Neutral) are mapped to one of 12 seasonal archetypes to generate your personal palette.',
+                      body: 'Your Monk tone and undertone (Cool/Warm/Neutral) are mapped to one of 12 seasonal archetypes to generate your personal palette.',
                     ).animate().fadeIn(delay: 500.ms).slideX(begin: 0.1),
 
-                    const SizedBox(height: AppSpacing.s40),
+                    const SizedBox(height: AppSpacing.section),
 
-                    // Try It Now Button
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFF9070D9), // Dark Purple
-                            Color(0xFFB19CD9), // Light Purple
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF9070D9).withValues(alpha: 0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          )
-                        ],
-                      ),
-                      child: InkWell(
-                        onTap: () => context.go('/home'),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Symbols.camera, color: Colors.white, size: 24),
-                            SizedBox(width: 8),
-                            Text(
-                              'Try It Now',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    AppPrimaryButton(
+                      label: 'Try It Now',
+                      icon: LucideIcons.camera,
+                      onPressed: () => context.go('/home'),
                     ).animate().fadeIn(delay: 600.ms).slideY(begin: 0.2),
 
-                    const SizedBox(height: AppSpacing.s64),
+                    const SizedBox(height: 64),
                   ],
                 ),
               ),
@@ -220,55 +169,33 @@ class _InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.s20),
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.surfaceAltDark : AppColors.surfaceLight,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: isDark ? AppColors.borderDark : AppColors.borderLight,
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          )
-        ]
-      ),
+    return AppCard(
+      padding: const EdgeInsets.all(AppSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: theme.colorScheme.primary, size: 24),
+              IconContainer(
+                icon: icon,
+                backgroundColor: AppColors.lavenderTint,
+                iconColor: AppColors.primary,
               ),
-              const SizedBox(width: AppSpacing.s16),
+              const SizedBox(width: AppSpacing.lg),
               Expanded(
                 child: Text(
                   title,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : AppColors.textPrimaryLight,
-                  ),
+                  style: theme.textTheme.titleMedium,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.s12),
+          const SizedBox(height: AppSpacing.lg),
           Text(
             body,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: isDark ? AppColors.gray400 : AppColors.gray600,
+              color: AppColors.textSecondary,
               height: 1.5,
             ),
           ),
