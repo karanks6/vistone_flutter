@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'providers/theme_provider.dart';
 import 'router.dart';
 import 'widgets/design_system.dart';
-// Force rebuild to apply Image-Based Redesign and fix errors
+// Force rebuild to apply Final Complete UI Redesign
 
 import 'package:shared_preferences/shared_preferences.dart';
 
