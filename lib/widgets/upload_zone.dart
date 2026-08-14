@@ -160,7 +160,7 @@ class _UploadZoneState extends State<UploadZone> with SingleTickerProviderStateM
                 radius: const Radius.circular(24),
                 color: borderColor,
                 strokeWidth: 1.5,
-                dashPattern: const [8, 6],
+                dashPattern: const [8, 8],
                 padding: EdgeInsets.zero,
               ),
               child: Container(
@@ -174,11 +174,18 @@ class _UploadZoneState extends State<UploadZone> with SingleTickerProviderStateM
                       width: 72,
                       height: 72,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
+                        gradient: LinearGradient(
+                          colors: [
+                            theme.colorScheme.primary.withValues(alpha: 0.7),
+                            theme.colorScheme.primary,
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.4),
+                            color: theme.colorScheme.primary.withValues(alpha: 0.3),
                             blurRadius: 16,
                             spreadRadius: 2,
                             offset: const Offset(0, 4),
@@ -198,7 +205,7 @@ class _UploadZoneState extends State<UploadZone> with SingleTickerProviderStateM
                       'Upload your photo',
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: theme.textTheme.bodyLarge?.color,
+                        color: AppColors.textPrimaryLight,
                       ),
                     ),
                     
@@ -213,19 +220,50 @@ class _UploadZoneState extends State<UploadZone> with SingleTickerProviderStateM
                     
                     const SizedBox(height: 16),
                     
-                    // Badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
+                    Text(
+                      'Max 10MB',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.5),
                       ),
-                      child: Text(
-                        'Max 10MB',
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.w600,
+                    ),
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Choose Photo Button
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFF9070D9), // Dark Purple
+                            Color(0xFFB19CD9), // Light Purple
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
                         ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF9070D9).withValues(alpha: 0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Symbols.photo_camera, color: Colors.white, size: 20),
+                          SizedBox(width: 8),
+                          Text(
+                            'Choose Photo',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
