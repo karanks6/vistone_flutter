@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_radii.dart';
+import '../theme/app_shadows.dart';
 
 class AppPrimaryButton extends StatefulWidget {
   final String label;
@@ -67,61 +68,48 @@ class _AppPrimaryButtonState extends State<AppPrimaryButton> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     final bool active = widget.isEnabled && !widget.isLoading;
-    
     return GestureDetector(
       onTapDown: _handleTapDown,
       onTapUp: _handleTapUp,
       onTapCancel: _handleTapCancel,
       child: ScaleTransition(
         scale: _scaleAnimation,
-        child: Container(
-          height: 54,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppRadii.md),
-            gradient: active
-                ? const LinearGradient(
-                    colors: [AppColors.primary, Color(0xFFC65DE8)],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  )
-                : null,
-            color: active ? null : AppColors.textDisabled.withValues(alpha: 0.3),
-            boxShadow: active
-                ? [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.18),
-                      blurRadius: 24,
-                      offset: const Offset(0, 8),
-                    )
-                  ]
-                : null,
-          ),
-          child: Center(
-            child: widget.isLoading
-                ? const SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.5,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                : Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (widget.icon != null) ...[
-                        Icon(widget.icon, color: Colors.white, size: 20),
-                        const SizedBox(width: 8),
-                      ],
-                      Text(
-                        widget.label,
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 180),
+          opacity: active ? 1 : 0.45,
+          child: Container(
+            height: 56,
+            decoration: BoxDecoration(
+              color: AppColors.clay,
+              borderRadius: BorderRadius.circular(AppRadii.pill),
+              boxShadow: active ? AppShadows.raisedAction : null,
+            ),
+            child: Center(
+              child: widget.isLoading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.2,
+                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.textInverse),
                       ),
-                    ],
-                  ),
+                    )
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (widget.icon != null) ...[
+                          Icon(widget.icon, color: AppColors.textInverse, size: 19),
+                          const SizedBox(width: 9),
+                        ],
+                        Text(
+                          widget.label,
+                          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                color: AppColors.textInverse,
+                              ),
+                        ),
+                      ],
+                    ),
+            ),
           ),
         ),
       ),

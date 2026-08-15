@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'design_system.dart';
+import '../core/theme/app_colors.dart';
+import '../core/theme/app_radii.dart';
+import '../core/theme/app_shadows.dart';
 
 enum AppButtonVariant { filled, tonal, outlined, text }
 
+/// Flexible button retained for secondary actions. The main flow uses
+/// [AppPrimaryButton], while this gives settings and small controls a coherent
+/// visual treatment.
 class AppButton extends StatefulWidget {
   final String label;
   final VoidCallback? onPressed;
@@ -53,161 +57,85 @@ class AppButton extends StatefulWidget {
   State<AppButton> createState() => _AppButtonState();
 }
 
-class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  bool _isHovered = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 250),
-      reverseDuration: const Duration(milliseconds: 250),
-    );
-    // Playful scale: Base 1.0. Hover: 1.02. Pressed: 0.96.
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _handleTapDown(TapDownDetails details) {
-    if (widget.onPressed != null && !widget.isLoading) {
-      _controller.forward();
-      HapticFeedback.lightImpact();
-    }
-  }
-
-  void _handleTapUp(TapUpDetails details) {
-    if (widget.onPressed != null && !widget.isLoading) {
-      _controller.reverse();
-    }
-  }
-
-  void _handleTapCancel() {
-    if (widget.onPressed != null && !widget.isLoading) {
-      _controller.reverse();
-    }
-  }
+class _AppButtonState extends State<AppButton> {
+  bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final isDisabled = widget.onPressed == null || widget.isLoading;
-
-    Color bg;
-    Color fg;
-    BorderSide? border;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final disabled = widget.onPressed == null || widget.isLoading;
+    final Color foreground;
+    final Color background;
+    final BorderSide? border;
 
     switch (widget.variant) {
       case AppButtonVariant.filled:
-        bg = theme.colorScheme.primary;
-        fg = isDark ? AppColors.bgDark : Colors.white;
-        break;
+        foreground = AppColors.textInverse;
+        background = AppColors.forest;
+        border = null;
       case AppButtonVariant.tonal:
-        bg = isDark ? AppColors.surfaceDark : AppColors.gray100;
-        fg = theme.colorScheme.primary;
-        break;
+        foreground = dark ? AppColors.sage : AppColors.forest;
+        background = dark ? AppColors.nightSurfaceRaised : AppColors.surfaceSage;
+        border = null;
       case AppButtonVariant.outlined:
-        bg = Colors.transparent;
-        fg = theme.textTheme.bodyLarge?.color ?? AppColors.gray900;
-        border = BorderSide(color: isDark ? AppColors.gray700 : AppColors.gray300);
-        break;
+        foreground = dark ? AppColors.nightText : AppColors.ink;
+        background = Colors.transparent;
+        border = BorderSide(color: dark ? AppColors.nightLine : AppColors.lineStrong);
       case AppButtonVariant.text:
-        bg = Colors.transparent;
-        fg = theme.colorScheme.primary;
-        break;
+        foreground = dark ? AppColors.sage : AppColors.forest;
+        background = Colors.transparent;
+        border = null;
     }
 
-    if (isDisabled) {
-      bg = widget.variant == AppButtonVariant.outlined || widget.variant == AppButtonVariant.text
-          ? Colors.transparent
-          : (isDark ? AppColors.gray800 : AppColors.gray200);
-      fg = isDark ? AppColors.gray600 : AppColors.gray400;
-      border = widget.variant == AppButtonVariant.outlined
-          ? BorderSide(color: isDark ? AppColors.gray800 : AppColors.gray200)
-          : null;
-    }
-
-    Widget child = Row(
-      mainAxisSize: widget.isExpanded ? MainAxisSize.max : MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (widget.isLoading) ...[
-          SizedBox(
-            width: 16,
-            height: 16,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(fg),
+    return GestureDetector(
+      onTapDown: disabled ? null : (_) => setState(() => _pressed = true),
+      onTapCancel: disabled ? null : () => setState(() => _pressed = false),
+      onTapUp: disabled
+          ? null
+          : (_) {
+              setState(() => _pressed = false);
+              widget.onPressed?.call();
+            },
+      child: AnimatedScale(
+        scale: _pressed ? .97 : 1,
+        duration: const Duration(milliseconds: 120),
+        child: AnimatedOpacity(
+          opacity: disabled ? .45 : 1,
+          duration: const Duration(milliseconds: 150),
+          child: Container(
+            width: widget.isExpanded ? double.infinity : null,
+            height: 50,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+              color: background,
+              borderRadius: BorderRadius.circular(AppRadii.pill),
+              border: border == null ? null : Border.fromBorderSide(border),
+              boxShadow: widget.variant == AppButtonVariant.filled && !disabled
+                  ? AppShadows.card
+                  : null,
+            ),
+            child: Row(
+              mainAxisSize: widget.isExpanded ? MainAxisSize.max : MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (widget.isLoading)
+                  SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: foreground),
+                  )
+                else if (widget.icon != null)
+                  Icon(widget.icon, size: 18, color: foreground),
+                if (widget.isLoading || widget.icon != null) const SizedBox(width: 8),
+                Text(
+                  widget.label,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(color: foreground),
+                ),
+              ],
             ),
           ),
-          const SizedBox(width: AppSpacing.s8),
-        ] else if (widget.icon != null) ...[
-          Icon(widget.icon, size: 20, color: fg),
-          const SizedBox(width: AppSpacing.s8),
-        ],
-        Text(
-          widget.label,
-          style: theme.textTheme.labelLarge?.copyWith(color: fg),
-        ),
-      ],
-    );
-
-    Widget buttonNode = MouseRegion(
-      onEnter: (_) {
-        if (!isDisabled) setState(() => _isHovered = true);
-      },
-      onExit: (_) {
-        if (!isDisabled) setState(() => _isHovered = false);
-      },
-      child: GestureDetector(
-        onTapDown: _handleTapDown,
-        onTapUp: _handleTapUp,
-        onTapCancel: _handleTapCancel,
-        onTap: widget.isLoading ? null : widget.onPressed,
-        behavior: HitTestBehavior.opaque,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOutCubic,
-          padding: AppSpacing.buttonPadding,
-          decoration: BoxDecoration(
-            color: _isHovered && widget.variant == AppButtonVariant.text
-                ? fg.withValues(alpha: 0.08)
-                : bg,
-            borderRadius: AppShapes.button,
-            border: border != null ? Border.fromBorderSide(border) : null,
-            boxShadow: _isHovered && widget.variant == AppButtonVariant.filled && !isDisabled
-                ? AppElevations.level1(isDark)
-                : null,
-          ),
-          child: child,
         ),
       ),
-    );
-
-    return AnimatedBuilder(
-      animation: _scaleAnimation,
-      builder: (context, child) {
-        // Apply hover scale if not pressed, pressed scale if pressed.
-        double scale = _scaleAnimation.value;
-        if (scale == 1.0 && _isHovered && !isDisabled) {
-          scale = 1.02; // Playful slight pop on hover
-        }
-        return Transform.scale(
-          scale: scale,
-          child: child,
-        );
-      },
-      child: buttonNode,
     );
   }
 }

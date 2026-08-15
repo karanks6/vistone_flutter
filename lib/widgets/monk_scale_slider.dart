@@ -11,81 +11,51 @@ class MonkScaleSlider extends StatelessWidget {
     required this.detectedTone,
   });
 
-  Color _parseHex(String hex) {
-    final cleaned = hex.replaceAll('#', '').padLeft(6, '0');
+  Color _parseHex(String value) {
+    final cleaned = value.replaceAll('#', '').padLeft(6, '0');
     return Color(int.parse('FF$cleaned', radix: 16));
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
+    final dark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.s24),
+      padding: const EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.cardDark : AppColors.cardLight,
-        borderRadius: AppShapes.card,
-        border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.gray200,
-          width: 1,
-        ),
-        boxShadow: AppElevations.level1(isDark),
+        color: dark ? AppColors.nightSurfaceRaised : AppColors.surface,
+        borderRadius: BorderRadius.circular(AppRadii.lg),
+        border: Border.all(color: dark ? AppColors.nightLine : AppColors.line),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'MONK SCALE',
-            style: theme.textTheme.labelMedium?.copyWith(
-              color: isDark ? AppColors.gray400 : AppColors.gray500,
-              letterSpacing: 1.0,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.s20),
+          Text('MONK SKIN TONE SCALE', style: Theme.of(context).textTheme.labelSmall),
+          const SizedBox(height: AppSpacing.lg),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: List.generate(monkColors.length, (i) {
-              final toneNumber = i + 1;
-              final isSelected = toneNumber == detectedTone;
-              final color = _parseHex(monkColors[i]);
-
+            children: List.generate(monkColors.length, (index) {
+              final tone = index + 1;
+              final selected = tone == detectedTone;
               return Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 2),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
                       AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.decelerate,
-                        height: isSelected ? 64 : 40,
+                        duration: AppMotion.normal,
+                        curve: AppMotion.standard,
+                        height: selected ? 48 : 31,
                         decoration: BoxDecoration(
-                          color: color,
-                          borderRadius: BorderRadius.circular(100),
-                          border: isSelected
-                              ? Border.all(color: AppColors.primary, width: 2)
-                              : Border.all(
-                                  color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.gray200,
-                                  width: 1,
-                                ),
-                          boxShadow: isSelected ? AppElevations.level2(isDark) : null,
+                          color: _parseHex(monkColors[index]),
+                          borderRadius: BorderRadius.circular(99),
+                          border: selected ? Border.all(color: AppColors.clay, width: 2) : null,
                         ),
                       ),
+                      const SizedBox(height: 7),
                       AnimatedOpacity(
-                        duration: const Duration(milliseconds: 300),
-                        opacity: isSelected ? 1.0 : 0.0,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: AppSpacing.s8),
-                          child: Text(
-                            '$toneNumber',
-                            style: theme.textTheme.labelMedium?.copyWith(
-                              color: theme.colorScheme.primary,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
+                        duration: AppMotion.fast,
+                        opacity: selected ? 1 : .45,
+                        child: Text('$tone', style: Theme.of(context).textTheme.labelSmall),
                       ),
                     ],
                   ),
