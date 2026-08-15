@@ -1,81 +1,197 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lucide_icons/lucide_icons.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import '../providers/theme_provider.dart';
 import '../widgets/design_system.dart';
 import 'upload_bottom_sheet.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
-  @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int _currentIndex = 0;
-
-  static const _tips = [
-    (LucideIcons.sun, 'Natural Light', 'Step near a window for best accuracy.'),
-    (LucideIcons.camera, 'Face the Camera', 'Look directly at the lens.'),
-    (LucideIcons.sparkles, 'No Filters', 'Remove makeup & color filters.'),
-  ];
-
-  void _showUploadOptions() {
-    showModalBottomSheet(
+  void _showUploadOptions(BuildContext context) {
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => const UploadBottomSheet(),
+      builder: (_) => const UploadBottomSheet(),
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
+    final dark = theme.brightness == Brightness.dark;
     return Scaffold(
-      bottomNavigationBar: _buildBottomNav(theme, isDark),
-      body: SafeArea(
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverToBoxAdapter(
-              child: _buildHeader(theme, isDark),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+      body: AppPageBackdrop(
+        child: SafeArea(
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(24, 18, 24, 36),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate.fixed([
+                    _TopBar(
+                      dark: dark,
+                      onThemeTap: () => ref.read(themeProvider.notifier).toggleTheme(),
+                      onGuideTap: () => context.push('/about'),
+                    ),
+                    const SizedBox(height: AppSpacing.hero),
+                    _Hero(theme: theme),
                     const SizedBox(height: AppSpacing.xxxl),
-                    _buildHero(theme, isDark),
+                    _UploadPanel(onTap: () => _showUploadOptions(context))
+                        .animate()
+                        .fadeIn(delay: 250.ms, duration: 520.ms)
+                        .slideY(begin: .10, end: 0, curve: Curves.easeOutCubic),
                     const SizedBox(height: AppSpacing.section),
-                    _buildUploadCard(theme, isDark),
+                    _SectionTitle(
+                      eyebrow: 'PREPARE YOUR PHOTO',
+                      title: 'A good selfie makes a\nbetter palette.',
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                    const _PreparationList(),
                     const SizedBox(height: AppSpacing.section),
-                  ],
+                    _GuideCard(onTap: () => context.push('/about')),
+                    const SizedBox(height: AppSpacing.xxxl),
+                    Center(
+                      child: Text(
+                        'VISTONE · PRIVATE BY DESIGN',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: dark ? AppColors.nightMuted : AppColors.textTertiary,
+                        ),
+                      ),
+                    ),
+                  ]),
                 ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TopBar extends StatelessWidget {
+  final bool dark;
+  final VoidCallback onThemeTap;
+  final VoidCallback onGuideTap;
+
+  const _TopBar({required this.dark, required this.onThemeTap, required this.onGuideTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.asset('assets/icon/vistone_logo.png', width: 42, height: 42, fit: BoxFit.cover),
+        ),
+        const SizedBox(width: 11),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('VISTONE AI', style: Theme.of(context).textTheme.labelMedium?.copyWith(letterSpacing: 1.8)),
+            const SizedBox(height: 2),
+            Text('Colour studio', style: Theme.of(context).textTheme.bodySmall),
+          ],
+        ),
+        const Spacer(),
+        AppIconButton(
+          icon: dark ? LucideIcons.sun : LucideIcons.moon,
+          semanticLabel: dark ? 'Use light theme' : 'Use dark theme',
+          onTap: onThemeTap,
+        ),
+        const SizedBox(width: 8),
+        AppIconButton(
+          icon: LucideIcons.helpCircle,
+          semanticLabel: 'Learn about Vistone',
+          onTap: onGuideTap,
+        ),
+      ],
+    ).animate().fadeIn(duration: 350.ms).slideY(begin: -.08, end: 0);
+  }
+}
+
+class _Hero extends StatelessWidget {
+  final ThemeData theme;
+
+  const _Hero({required this.theme});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Dress in your\nbest light.',
+          style: theme.textTheme.displayLarge,
+        ).animate().fadeIn(delay: 120.ms, duration: 550.ms).slideY(begin: .12),
+        const SizedBox(height: AppSpacing.lg),
+        Text(
+          'A thoughtful read of your natural colouring, with shades made to bring you forward.',
+          style: theme.textTheme.bodyLarge,
+        ).animate().fadeIn(delay: 250.ms, duration: 420.ms),
+      ],
+    );
+  }
+}
+
+class _ColorComposition extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 1.28,
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: AppColors.forestDeep,
+          borderRadius: BorderRadius.circular(AppRadii.hero),
+          boxShadow: AppShadows.card,
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              right: -44,
+              top: -35,
+              child: _Orb(size: 210, color: AppColors.marigold.withValues(alpha: .9)),
             ),
-            SliverToBoxAdapter(
-              child: _buildTipsSection(theme, isDark),
+            Positioned(
+              left: -48,
+              bottom: -78,
+              child: _Orb(size: 210, color: AppColors.clay.withValues(alpha: .86)),
             ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
-                child: Column(
-                  children: [
-                    const SizedBox(height: AppSpacing.section),
-                    _buildHowItWorksCard(theme, isDark),
-                    const SizedBox(height: AppSpacing.section),
-                  ],
-                ),
+            Positioned(
+              right: 78,
+              bottom: -36,
+              child: _Orb(size: 122, color: AppColors.sage.withValues(alpha: .93)),
+            ),
+            Positioned(
+              left: 26,
+              top: 24,
+              child: Text(
+                'YOUR\nNATURAL\nPALETTE',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: AppColors.textInverse.withValues(alpha: .82),
+                      height: 1.65,
+                      letterSpacing: 1.65,
+                    ),
+              ),
+            ),
+            Positioned(
+              left: 26,
+              bottom: 22,
+              child: Row(
+                children: const [
+                  _MiniSwatch(color: AppColors.clay),
+                  SizedBox(width: 7),
+                  _MiniSwatch(color: AppColors.marigold),
+                  SizedBox(width: 7),
+                  _MiniSwatch(color: AppColors.sage),
+                ],
               ),
             ),
           ],
@@ -83,345 +199,186 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
     );
   }
+}
 
-  Widget _buildHeader(ThemeData theme, bool isDark) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.xxl, AppSpacing.lg, AppSpacing.xxl, 0),
-      child: Row(
-        children: [
-          Text(
-            'Vistone',
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          ShaderMask(
-            shaderCallback: (bounds) => const LinearGradient(
-              colors: [AppColors.primary, Color(0xFFC65DE8)],
-            ).createShader(bounds),
-            child: Text(
-              ' AI',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w800,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          const Spacer(),
-          _HeaderIconButton(
-            icon: isDark ? LucideIcons.sun : LucideIcons.moon,
-            onTap: () => ref.read(themeProvider.notifier).setMode(isDark ? ThemeMode.light : ThemeMode.dark),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          _HeaderIconButton(
-            icon: LucideIcons.helpCircle,
-            onTap: () => context.push('/about'),
-          ),
-        ],
-      ),
-    );
-  }
+class _Orb extends StatelessWidget {
+  final double size;
+  final Color color;
+  const _Orb({required this.size, required this.color});
 
-  Widget _buildHero(ThemeData theme, bool isDark) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 6,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text.rich(
-                TextSpan(
-                  children: [
-                    const TextSpan(text: 'Discover your\ntrue '),
-                    TextSpan(
-                      text: 'colors.',
-                      style: TextStyle(color: AppColors.primary),
-                    ),
-                  ],
-                ),
-                style: theme.textTheme.displayLarge,
-              ).animate().fadeIn(duration: AppMotion.normal).slideY(begin: 0.1, curve: AppMotion.standard),
-              const SizedBox(height: AppSpacing.lg),
-              Text(
-                'Upload a selfie to find the perfect color palette that complements your natural skin tone.',
-                style: theme.textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
-              ).animate().fadeIn(delay: 100.ms, duration: AppMotion.normal),
-            ],
-          ),
+  @override
+  Widget build(BuildContext context) => Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+      );
+}
+
+class _MiniSwatch extends StatelessWidget {
+  final Color color;
+  const _MiniSwatch({required this.color});
+  @override
+  Widget build(BuildContext context) => Container(
+        height: 26,
+        width: 26,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          border: Border.all(color: AppColors.textInverse.withValues(alpha: .35)),
         ),
-        const SizedBox(width: AppSpacing.xl),
-        Expanded(
-          flex: 4,
-          child: AspectRatio(
-            aspectRatio: 0.8,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppRadii.hero),
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [AppColors.surfaceLavender, AppColors.peach],
-                ),
-              ),
-              child: const Icon(LucideIcons.sparkles, size: 48, color: Colors.white),
-            ),
-          ).animate().fadeIn(delay: 200.ms).scale(curve: AppMotion.emphasized),
-        ),
-      ],
-    );
-  }
+      );
+}
 
-  Widget _buildUploadCard(ThemeData theme, bool isDark) {
-    return AppCard(
-      padding: EdgeInsets.zero,
-      radius: AppRadii.hero,
+class _UploadPanel extends StatelessWidget {
+  final VoidCallback onTap;
+  const _UploadPanel({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Material(
+      color: dark ? AppColors.nightSurfaceRaised : AppColors.surface,
+      borderRadius: BorderRadius.circular(AppRadii.hero),
       child: InkWell(
-        onTap: _showUploadOptions,
+        onTap: onTap,
         borderRadius: BorderRadius.circular(AppRadii.hero),
-        child: Padding(
+        child: Ink(
           padding: const EdgeInsets.all(AppSpacing.xxl),
-          child: DottedBorder(
-            options: RoundedRectDottedBorderOptions(
-              color: const Color(0xFFBBA7FF),
-              strokeWidth: 2,
-              dashPattern: const [8, 6],
-              radius: const Radius.circular(AppRadii.xl),
-            ),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 40, horizontal: AppSpacing.xl),
-              child: Column(
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFEEE8FF),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(LucideIcons.uploadCloud, size: 32, color: AppColors.primary),
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-                  Text(
-                    'Upload your photo',
-                    style: theme.textTheme.titleSmall,
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    'JPG, PNG or WebP\nMax 10MB',
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-                  AppPrimaryButton(
-                    label: 'Choose Photo',
-                    onPressed: _showUploadOptions,
-                  ),
-                ],
-              ),
-            ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppRadii.hero),
+            border: Border.all(color: dark ? AppColors.nightLine : AppColors.line),
           ),
-        ),
-      ),
-    ).animate().fadeIn(delay: 300.ms, duration: AppMotion.normal).slideY(begin: 0.1);
-  }
-
-  Widget _buildTipsSection(ThemeData theme, bool isDark) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
-          child: Row(
+          child: Column(
             children: [
-              const Icon(LucideIcons.sparkles, size: 20, color: AppColors.primary),
-              const SizedBox(width: AppSpacing.sm),
-              Text(
-                'Tips for best results',
-                style: theme.textTheme.titleMedium,
+              Container(
+                height: 62,
+                width: 62,
+                decoration: const BoxDecoration(color: AppColors.surfaceClay, shape: BoxShape.circle),
+                child: const Icon(LucideIcons.scanFace, color: AppColors.clay, size: 28),
               ),
+              const SizedBox(height: AppSpacing.lg),
+              Text('Start with a simple selfie', style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 6),
+              Text(
+                'No filters, just natural light and your lovely face.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              SizedBox(
+                width: double.infinity,
+                child: AppPrimaryButton(
+                  label: 'Choose a photo',
+                  icon: LucideIcons.camera,
+                  onPressed: onTap,
+                ),
+              ),
+              const SizedBox(height: 13),
+              Text(
+                'YOUR PHOTO STAYS ON THIS DEVICE',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.textTertiary)),
             ],
           ),
         ),
-        const SizedBox(height: AppSpacing.lg),
-        SizedBox(
-          height: 180,
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            itemCount: _tips.length,
-            separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.lg),
-            itemBuilder: (context, index) {
-              final tip = _tips[index];
-              return SizedBox(
-                width: 200,
-                child: AppCard(
-                  radius: AppRadii.lg,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconContainer(
-                        icon: tip.$1,
-                        backgroundColor: AppColors.surfaceLavender,
-                        iconColor: AppColors.primary,
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      Text(tip.$2, style: theme.textTheme.titleSmall),
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(tip.$3, style: theme.textTheme.bodySmall?.copyWith(color: AppColors.textSecondary)),
-                    ],
-                  ),
-                ),
-              ).animate().fadeIn(delay: Duration(milliseconds: 400 + (index * 60))).slideX(begin: 0.1);
-            },
-          ),
-        ),
-      ],
+      ),
     );
   }
+}
 
-  Widget _buildHowItWorksCard(ThemeData theme, bool isDark) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppRadii.xl),
-        gradient: const LinearGradient(
-          colors: [Color(0xFFBFA8FF), Color(0xFFFFC5B7)],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => context.push('/about'),
-          borderRadius: BorderRadius.circular(AppRadii.xl),
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.xl),
+class _SectionTitle extends StatelessWidget {
+  final String eyebrow;
+  final String title;
+  const _SectionTitle({required this.eyebrow, required this.title});
+  @override
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(eyebrow, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.forest)),
+          const SizedBox(height: 10),
+          Text(title, style: Theme.of(context).textTheme.displaySmall),
+        ],
+      );
+}
+
+class _PreparationList extends StatelessWidget {
+  const _PreparationList();
+
+  @override
+  Widget build(BuildContext context) {
+    const tips = [
+      (LucideIcons.sunMedium, 'Find gentle daylight', 'Face a window and avoid harsh overhead light.'),
+      (LucideIcons.focus, 'Keep your face clear', 'Look at the camera with your full face in view.'),
+      (LucideIcons.sparkle, 'Skip the filters', 'Use a recent, unedited photo for the truest read.'),
+    ];
+    return Column(
+      children: List.generate(tips.length, (index) {
+        final tip = tips[index];
+        return Padding(
+          padding: EdgeInsets.only(bottom: index == tips.length - 1 ? 0 : 12),
+          child: AppCard(
+            padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(LucideIcons.play, color: AppColors.primary),
-                ),
-                const SizedBox(width: AppSpacing.lg),
+                IconContainer(icon: tip.$1, backgroundColor: AppColors.surfaceSage, iconColor: AppColors.forest),
+                const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'How does it work?',
-                        style: theme.textTheme.titleSmall?.copyWith(color: AppColors.deepInk),
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        'Learn how Vistone AI analyzes your skin tone.',
-                        style: theme.textTheme.bodySmall?.copyWith(color: AppColors.deepInk.withValues(alpha: 0.8)),
-                      ),
+                      Text(tip.$2, style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 3),
+                      Text(tip.$3, style: Theme.of(context).textTheme.bodySmall),
                     ],
                   ),
                 ),
-                const Icon(LucideIcons.chevronRight, color: AppColors.deepInk),
+                Text('0${index + 1}', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.textTertiary)),
               ],
             ),
           ),
-        ),
-      ),
-    ).animate().fadeIn(delay: 600.ms);
-  }
-
-  Widget _buildBottomNav(ThemeData theme, bool isDark) {
-    return SafeArea(
-      child: Container(
-        height: 72,
-        margin: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.md),
-        decoration: BoxDecoration(
-          color: theme.cardTheme.color,
-          borderRadius: BorderRadius.circular(AppRadii.xl),
-          boxShadow: AppShadows.card,
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(AppRadii.xl),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildNavItem(0, LucideIcons.home, 'Home', theme),
-              _buildNavItem(1, LucideIcons.clock, 'History', theme),
-              _buildNavItem(2, LucideIcons.palette, 'Palette', theme),
-              _buildNavItem(3, LucideIcons.user, 'Profile', theme),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(int index, IconData icon, String label, ThemeData theme) {
-    final isSelected = _currentIndex == index;
-    return GestureDetector(
-      onTap: () => setState(() => _currentIndex = index),
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.surfaceLavender : Colors.transparent,
-          borderRadius: BorderRadius.circular(AppRadii.pill),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 22,
-              color: isSelected ? AppColors.primary : AppColors.textSecondary,
-            ),
-            if (isSelected) ...[
-              const SizedBox(width: AppSpacing.xs),
-              Text(
-                label,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: AppColors.primary,
-                ),
-              ),
-            ]
-          ],
-        ),
-      ),
+        ).animate().fadeIn(delay: Duration(milliseconds: 380 + (index * 90))).slideX(begin: .05);
+      }),
     );
   }
 }
 
-class _HeaderIconButton extends StatelessWidget {
-  final IconData icon;
+class _GuideCard extends StatelessWidget {
   final VoidCallback onTap;
-
-  const _HeaderIconButton({required this.icon, required this.onTap});
-
+  const _GuideCard({required this.onTap});
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 44,
-      height: 44,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        border: Border.all(color: const Color(0xFFECE8F4)),
-      ),
-      child: Material(
-        color: Colors.transparent,
+  Widget build(BuildContext context) => Material(
+        color: AppColors.forestDeep,
+        borderRadius: BorderRadius.circular(AppRadii.lg),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(22),
-          child: Icon(icon, size: 22, color: AppColors.deepInk),
+          borderRadius: BorderRadius.circular(AppRadii.lg),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.textInverse.withValues(alpha: .12),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(LucideIcons.bookOpen, color: AppColors.marigold, size: 22),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('How Vistone sees colour', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppColors.textInverse)),
+                      const SizedBox(height: 4),
+                      Text('A simple guide to your analysis.', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.nightMuted)),
+                    ],
+                  ),
+                ),
+                const Icon(LucideIcons.arrowUpRight, color: AppColors.textInverse),
+              ],
+            ),
+          ),
         ),
-      ),
-    );
-  }
+      );
 }
