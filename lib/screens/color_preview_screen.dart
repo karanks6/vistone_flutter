@@ -1,11 +1,13 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../models/color_swatch.dart' as models;
 import '../widgets/design_system.dart';
 
-class ColorPreviewScreen extends StatelessWidget {
+class ColorPreviewScreen extends StatefulWidget {
   final models.ColorSwatch swatch;
   final bool isAvoid;
   final String undertone;
@@ -17,116 +19,165 @@ class ColorPreviewScreen extends StatelessWidget {
     required this.undertone,
   });
 
-  Color _parseHex(String hex) {
-    final cleaned = hex.replaceAll('#', '').padLeft(6, '0');
-    return Color(int.parse('FF$cleaned', radix: 16));
+  @override
+  State<ColorPreviewScreen> createState() => _ColorPreviewScreenState();
+}
+
+class _ColorPreviewScreenState extends State<ColorPreviewScreen> {
+  bool _copied = false;
+
+  Color get _color {
+    final hex = widget.swatch.hex.replaceAll('#', '').padLeft(6, '0');
+    return Color(int.parse('FF$hex', radix: 16));
+  }
+
+  Future<void> _copy() async {
+    await FlutterClipboard.copy(widget.swatch.hex.toUpperCase());
+    if (!mounted) return;
+    HapticFeedback.selectionClick();
+    setState(() => _copied = true);
+    Future<void>.delayed(const Duration(milliseconds: 1600), () {
+      if (mounted) setState(() => _copied = false);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final color = _parseHex(swatch.hex);
-    final luminance = color.computeLuminance();
-    final onColor = luminance > 0.4 ? Colors.black87 : Colors.white;
-
+    final color = _color;
+    final lightColor = color.computeLuminance() > .44;
+    final foreground = lightColor ? AppColors.ink : AppColors.textInverse;
+    final muted = foreground.withValues(alpha: .72);
+    final tag = 'swatch-${widget.swatch.hex}-${widget.isAvoid}';
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            color: color,
-            width: double.infinity,
-            height: double.infinity,
-          ),
-
-          SafeArea(
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.topLeft,
+      backgroundColor: color,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 28),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  AppIconButton(
+                    icon: LucideIcons.arrowLeft,
+                    semanticLabel: 'Return to palette',
+                    onTap: () => context.pop(),
+                    inverted: true,
+                  ),
+                  const Spacer(),
+                  Text(
+                    widget.isAvoid ? 'PAUSE ON THIS' : 'A SHADE FOR YOU',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(color: muted),
+                  ),
+                ],
+              ),
+              const Spacer(flex: 2),
+              Hero(
+                tag: tag,
+                child: Material(
+                  color: Colors.transparent,
+                  child: _ColorForm(color: color, foreground: foreground),
+                ),
+              ),
+              const SizedBox(height: 34),
+              Text(widget.swatch.name, style: Theme.of(context).textTheme.displayLarge?.copyWith(color: foreground))
+                  .animate()
+                  .fadeIn(duration: 420.ms)
+                  .slideY(begin: .10),
+              const SizedBox(height: 14),
+              Text(
+                widget.isAvoid
+                    ? 'This shade can compete with the natural ${widget.undertone.toLowerCase()} balance in your colouring. Try it away from your face instead.'
+                    : 'This shade sits beautifully with your natural ${widget.undertone.toLowerCase()} balance and can make your complexion feel more luminous.',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: muted),
+              ).animate().fadeIn(delay: 120.ms, duration: 400.ms),
+              const SizedBox(height: 24),
+              Material(
+                color: foreground.withValues(alpha: .13),
+                borderRadius: BorderRadius.circular(AppRadii.pill),
+                child: InkWell(
+                  onTap: _copy,
+                  borderRadius: BorderRadius.circular(AppRadii.pill),
                   child: Padding(
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    child: IconButton(
-                      icon: Container(
-                        padding: const EdgeInsets.all(AppSpacing.sm),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.15),
-                          shape: BoxShape.circle,
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 180),
+                          child: Icon(
+                            _copied ? LucideIcons.check : LucideIcons.copy,
+                            key: ValueKey(_copied),
+                            size: 18,
+                            color: foreground,
+                          ),
                         ),
-                        child: Icon(LucideIcons.arrowLeft, color: onColor, size: 24),
-                      ),
-                      onPressed: () => context.pop(),
+                        const SizedBox(width: 10),
+                        Text(
+                          _copied ? 'COPIED' : widget.swatch.hex.toUpperCase(),
+                          style: Theme.of(context).textTheme.labelMedium?.copyWith(color: foreground, letterSpacing: 1.1),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          _copied ? '' : 'TAP TO COPY',
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(color: muted),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-
-                const Spacer(),
-
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxl),
-                  child: Column(
-                    children: [
-                      Text(
-                        swatch.name,
-                        style: theme.textTheme.displayMedium?.copyWith(
-                          color: onColor,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      GestureDetector(
-                        onTap: () async {
-                          await FlutterClipboard.copy(swatch.hex);
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('${swatch.hex} copied to clipboard'),
-                              ),
-                            );
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.sm),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(AppRadii.pill),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                swatch.hex.toUpperCase(),
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  color: onColor.withValues(alpha: 0.9),
-                                  fontFamily: 'monospace',
-                                ),
-                              ),
-                              const SizedBox(width: AppSpacing.lg),
-                              Icon(LucideIcons.copy, color: onColor.withValues(alpha: 0.7), size: 18),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xxxl),
-                      Text(
-                        isAvoid
-                            ? 'This color may clash with ${undertone.toLowerCase()} undertones and wash out your complexion.'
-                            : 'This color harmonizes beautifully with ${undertone.toLowerCase()} undertones, bringing out a natural glow.',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: onColor.withValues(alpha: 0.8),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-
-                const Spacer(),
-                const SizedBox(height: 48),
-              ],
-            ),
+              ).animate().fadeIn(delay: 220.ms).slideY(begin: .08),
+              const Spacer(),
+              Row(
+                children: [
+                  Container(width: 38, height: 1, color: muted),
+                  const SizedBox(width: 10),
+                  Text('VISTONE COLOUR NOTE', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: muted)),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
+}
+
+class _ColorForm extends StatelessWidget {
+  final Color color;
+  final Color foreground;
+  const _ColorForm({required this.color, required this.foreground});
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        height: 176,
+        width: double.infinity,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              width: 176,
+              height: 176,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: foreground.withValues(alpha: .28)),
+              ),
+            ),
+            Container(
+              width: 126,
+              height: 126,
+              decoration: BoxDecoration(
+                color: foreground.withValues(alpha: .16),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(72),
+                  topRight: Radius.circular(72),
+                  bottomLeft: Radius.circular(22),
+                  bottomRight: Radius.circular(72),
+                ),
+              ),
+            ),
+            Container(width: 44, height: 44, decoration: BoxDecoration(color: foreground, shape: BoxShape.circle)),
+          ],
+        ),
+      );
 }

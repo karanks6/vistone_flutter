@@ -88,7 +88,7 @@ class _TopBar extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          child: Image.asset('assets/icon/vistone_logo.png', width: 42, height: 42, fit: BoxFit.cover),
+          child: Image.asset('assets/icon/vistone_logo.png', width: 62, height: 62, fit: BoxFit.cover),
         ),
         const SizedBox(width: 11),
         Column(
