@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
+import 'app_colors.dart';
 
 class AppShadows {
   AppShadows._();
 
   static List<BoxShadow> get card => [
         BoxShadow(
-          color: const Color(0xFF5A4E8A).withValues(alpha: 0.06),
-          blurRadius: 18,
-          spreadRadius: 0,
-          offset: const Offset(0, 6),
+          color: AppColors.ink.withValues(alpha: 0.07),
+          blurRadius: 30,
+          offset: const Offset(0, 12),
         ),
       ];
 
   static List<BoxShadow> get raisedAction => [
         BoxShadow(
-          color: const Color(0xFF6D4AFF).withValues(alpha: 0.18),
+          color: AppColors.clay.withValues(alpha: 0.28),
           blurRadius: 24,
-          offset: const Offset(0, 8),
+          offset: const Offset(0, 12),
         ),
       ];
 }

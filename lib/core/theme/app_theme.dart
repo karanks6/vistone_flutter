@@ -6,47 +6,55 @@ import 'app_radii.dart';
 class AppTheme {
   AppTheme._();
 
-  static ThemeData get light {
-    final textTheme = AppTypography.getTheme(AppColors.textPrimary, AppColors.textSecondary);
+  static ThemeData get light => _build(Brightness.light);
+  static ThemeData get dark => _build(Brightness.dark);
 
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.light,
-      scaffoldBackgroundColor: AppColors.bgLight,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
-        brightness: Brightness.light,
-      ),
-      textTheme: textTheme,
-      cardTheme: CardThemeData(
-        elevation: 0,
-        color: AppColors.surfaceLight,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadii.lg),
-          side: const BorderSide(color: AppColors.borderDefault, width: 1),
-        ),
-      ),
+  static ThemeData _build(Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
+    final text = AppTypography.getTheme(
+      isDark ? AppColors.nightText : AppColors.ink,
+      isDark ? AppColors.nightMuted : AppColors.textSecondary,
     );
-  }
-
-  static ThemeData get dark {
-    final textTheme = AppTypography.getTheme(AppColors.textPrimaryDark, AppColors.textSecondaryDark);
+    final surface = isDark ? AppColors.nightSurface : AppColors.surface;
+    final outline = isDark ? AppColors.nightLine : AppColors.line;
 
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: AppColors.bgDark,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primaryDark,
-        brightness: Brightness.dark,
+      brightness: brightness,
+      scaffoldBackgroundColor: isDark ? AppColors.night : AppColors.canvas,
+      colorScheme: ColorScheme(
+        brightness: brightness,
+        primary: isDark ? AppColors.sage : AppColors.forest,
+        onPrimary: isDark ? AppColors.ink : AppColors.textInverse,
+        secondary: AppColors.clay,
+        onSecondary: AppColors.textInverse,
+        error: AppColors.error,
+        onError: AppColors.textInverse,
+        surface: surface,
+        onSurface: isDark ? AppColors.nightText : AppColors.ink,
       ),
-      textTheme: textTheme,
+      textTheme: text,
+      dividerColor: outline,
+      splashFactory: InkSparkle.splashFactory,
       cardTheme: CardThemeData(
         elevation: 0,
-        color: AppColors.cardDark,
+        color: surface,
+        margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadii.lg),
+          side: BorderSide(color: outline),
         ),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: isDark ? AppColors.nightSurfaceRaised : AppColors.ink,
+        contentTextStyle: text.bodyMedium?.copyWith(color: AppColors.textInverse),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadii.md)),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: Colors.transparent,
+        modalBackgroundColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadii.sheet)),
       ),
     );
   }

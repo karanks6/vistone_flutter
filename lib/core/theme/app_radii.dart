@@ -1,11 +1,12 @@
 class AppRadii {
   AppRadii._();
 
-  static const double sm = 12.0;
-  static const double md = 16.0;
-  static const double lg = 20.0;
-  static const double xl = 24.0;
-  static const double hero = 28.0;
-  static const double sheet = 32.0;
-  static const double pill = 999.0;
+  static const double xs = 10;
+  static const double sm = 14;
+  static const double md = 18;
+  static const double lg = 24;
+  static const double xl = 30;
+  static const double hero = 36;
+  static const double sheet = 34;
+  static const double pill = 999;
 }
