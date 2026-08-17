@@ -87,7 +87,7 @@ class _TopBar extends StatelessWidget {
     return Row(
       children: [
         Transform.translate(
-          offset: const Offset(-16, 0),
+          offset: const Offset(-24, 0),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
