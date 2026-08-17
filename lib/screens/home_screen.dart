@@ -31,7 +31,7 @@ class HomeScreen extends ConsumerWidget {
             physics: const BouncingScrollPhysics(),
             slivers: [
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(24, 18, 24, 36),
+                padding: const EdgeInsets.fromLTRB(24, 4, 24, 36),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate.fixed([
                     _TopBar(
@@ -39,7 +39,7 @@ class HomeScreen extends ConsumerWidget {
                       onThemeTap: () => ref.read(themeProvider.notifier).toggleTheme(),
                       onGuideTap: () => context.push('/about'),
                     ),
-                    const SizedBox(height: AppSpacing.hero),
+                    const SizedBox(height: 16),
                     _Hero(theme: theme),
                     const SizedBox(height: AppSpacing.xxxl),
                     _UploadPanel(onTap: () => _showUploadOptions(context))
@@ -58,8 +58,8 @@ class HomeScreen extends ConsumerWidget {
                     const SizedBox(height: AppSpacing.xxxl),
                     Center(
                       child: Text(
-                        'VISTONE · PRIVATE BY DESIGN',
-                        style: theme.textTheme.labelSmall?.copyWith(
+                        'VISTONE AI ',
+                        style: theme.textTheme.labelMedium?.copyWith(
                           color: dark ? AppColors.nightMuted : AppColors.textTertiary,
                         ),
                       ),
@@ -87,15 +87,15 @@ class _TopBar extends StatelessWidget {
     return Row(
       children: [
         ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Image.asset('assets/icon/vistone_logo.png', width: 62, height: 62, fit: BoxFit.cover),
+          borderRadius: BorderRadius.circular(5),
+          child: Image.asset('assets/icon/vistone_logo.png', width: 92, height: 92, fit: BoxFit.cover),
         ),
         const SizedBox(width: 11),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('VISTONE AI', style: Theme.of(context).textTheme.labelMedium?.copyWith(letterSpacing: 1.8)),
-            const SizedBox(height: 2),
+            const SizedBox(height: 1),
             Text('Colour studio', style: Theme.of(context).textTheme.bodySmall),
           ],
         ),
