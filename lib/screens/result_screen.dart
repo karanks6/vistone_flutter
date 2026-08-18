@@ -24,10 +24,13 @@ class ResultScreen extends ConsumerWidget {
     return Scaffold(
       body: AppPageBackdrop(
         child: SafeArea(
-          child: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverPadding(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  SliverPadding(
                 padding: const EdgeInsets.fromLTRB(24, 16, 24, 34),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate.fixed([
@@ -133,18 +136,20 @@ class _ResultHero extends StatelessWidget {
   const _ResultHero({required this.image, required this.tone, required this.undertone});
 
   @override
-  Widget build(BuildContext context) => Container(
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          color: AppColors.forestDeep,
-          borderRadius: BorderRadius.circular(AppRadii.hero),
-          boxShadow: AppShadows.card,
-        ),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 222,
-              width: double.infinity,
+  Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: AppColors.forestDeep,
+        borderRadius: BorderRadius.circular(AppRadii.hero),
+        boxShadow: AppShadows.card,
+      ),
+      child: Column(
+        children: [
+          SizedBox(
+            height: (screenHeight * 0.28).clamp(200.0, 300.0),
+            width: double.infinity,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -230,7 +235,7 @@ class _ToneBadge extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('MONK', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.forestDeep, fontSize: 8)),
+            Text('MONK', style: Theme.of(context).textTheme.labelLarge?.copyWith(color: AppColors.forestDeep, fontSize: 8)),
             Text('$tone', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.forestDeep)),
           ],
         ),
