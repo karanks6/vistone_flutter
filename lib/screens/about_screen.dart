@@ -23,7 +23,7 @@ class AboutScreen extends StatelessWidget {
                       children: [
                         AppIconButton(icon: LucideIcons.arrowLeft, semanticLabel: 'Return home', onTap: () => context.pop()),
                         const SizedBox(width: 14),
-                        Text('THE VISTONE METHOD', style: Theme.of(context).textTheme.labelLarge?.copyWith(color: AppColors.textTertiary)),
+                        Text('THE VISTONE AI METHOD', style: Theme.of(context).textTheme.labelLarge?.copyWith(color: AppColors.textTertiary)),
                       ],
                     ).animate().fadeIn(duration: 300.ms),
                     const SizedBox(height: 38),
