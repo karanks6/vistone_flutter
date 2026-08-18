@@ -51,8 +51,11 @@ class _ColorPreviewScreenState extends State<ColorPreviewScreen> {
     return Scaffold(
       backgroundColor: color,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 28),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 28),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -132,7 +135,7 @@ class _ColorPreviewScreenState extends State<ColorPreviewScreen> {
                 children: [
                   Container(width: 38, height: 1, color: muted),
                   const SizedBox(width: 10),
-                  Text('VISTONE COLOUR NOTE', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: muted)),
+                  Text('VISTONE AI COLOUR NOTE', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: muted)),
                 ],
               ),
             ],
