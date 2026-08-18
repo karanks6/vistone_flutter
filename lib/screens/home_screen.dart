@@ -27,10 +27,13 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       body: AppPageBackdrop(
         child: SafeArea(
-          child: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverPadding(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 600),
+              child: CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  SliverPadding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate.fixed([
