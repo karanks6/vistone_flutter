@@ -142,7 +142,9 @@ class _ColorPreviewScreenState extends State<ColorPreviewScreen> {
           ),
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }
 
