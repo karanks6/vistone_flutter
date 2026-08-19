@@ -99,7 +99,9 @@ class ResultScreen extends ConsumerWidget {
           ),
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 }
 
@@ -218,6 +220,7 @@ class _ResultHero extends StatelessWidget {
           ],
         ),
       );
+  }
 }
 
 class _ToneBadge extends StatelessWidget {
