@@ -316,7 +316,7 @@ class _AnalysisSteps extends StatelessWidget {
                 if (done)
                   Text('Done', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.success))
                 else if (active)
-                  Text('Working', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.forest)),
+                  Text('Working', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.primary)),
               ],
             ),
           );
