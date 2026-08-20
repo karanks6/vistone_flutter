@@ -23,7 +23,7 @@ class AboutScreen extends StatelessWidget {
                       children: [
                         AppIconButton(icon: LucideIcons.arrowLeft, semanticLabel: 'Return home', onTap: () => context.pop()),
                         const SizedBox(width: 14),
-                        Text('THE VISTONE AI METHOD', style: Theme.of(context).textTheme.labelLarge?.copyWith(color: AppColors.textTertiary)),
+                        Text('THE VISTONE AI METHOD', style: Theme.of(context).textTheme.labelLarge),
                       ],
                     ).animate().fadeIn(duration: 300.ms),
                     const SizedBox(height: 38),
@@ -123,6 +123,7 @@ class _MethodList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
     const entries = [
       (LucideIcons.scanFace, 'We read the light', 'A clear, filter-free selfie lets us look at colour with less interference.'),
       (LucideIcons.layers, 'We find your tone', 'Skin-tone information is matched against the inclusive Monk Skin Tone Scale.'),
@@ -138,7 +139,11 @@ class _MethodList extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                IconContainer(icon: item.$1, backgroundColor: AppColors.surfaceClay, iconColor: AppColors.clay),
+                IconContainer(
+                  icon: item.$1, 
+                  backgroundColor: dark ? AppColors.nightSurfaceRaised : AppColors.surfaceClay, 
+                  iconColor: AppColors.clay
+                ),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(
@@ -150,7 +155,7 @@ class _MethodList extends StatelessWidget {
                     ],
                   ),
                 ),
-                Text('0${index + 1}', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.textTertiary)),
+                Text('0${index + 1}', style: Theme.of(context).textTheme.labelSmall),
               ],
             ),
           ),
@@ -162,10 +167,12 @@ class _MethodList extends StatelessWidget {
 
 class _TechnologyNote extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: AppColors.surfaceSage,
+          color: dark ? AppColors.nightSurfaceRaised : AppColors.surfaceSage,
           borderRadius: BorderRadius.circular(AppRadii.lg),
         ),
         child: Column(
@@ -181,9 +188,10 @@ class _TechnologyNote extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               'Face landmarks and colour sampling happen on your device. Vistone does not store or share your photo.',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.inkSoft),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: dark ? AppColors.nightMuted : AppColors.inkSoft),
             ),
           ],
         ),
       );
+  }
 }
