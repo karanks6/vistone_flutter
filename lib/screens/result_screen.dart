@@ -36,9 +36,6 @@ class ResultScreen extends ConsumerWidget {
                   delegate: SliverChildListDelegate.fixed([
                     _Header(
                       onBack: () => context.go('/home'),
-                      onShare: () => ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Your palette is ready to share.')),
-                      ),
                     ),
                     const SizedBox(height: 28),
                     _ResultHero(image: image, tone: result.tone, undertone: result.undertone)
@@ -110,15 +107,14 @@ class _ResultLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: AppPageBackdrop(
-          child: const Center(child: CircularProgressIndicator(color: AppColors.forest)),
+          child: Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)),
         ),
       );
 }
 
 class _Header extends StatelessWidget {
   final VoidCallback onBack;
-  final VoidCallback onShare;
-  const _Header({required this.onBack, required this.onShare});
+  const _Header({required this.onBack});
   @override
   Widget build(BuildContext context) => Row(
         children: [
@@ -126,7 +122,7 @@ class _Header extends StatelessWidget {
           const Spacer(),
           Text('YOUR COLOUR STORY', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.textTertiary)),
           const Spacer(),
-          AppIconButton(icon: LucideIcons.share2, semanticLabel: 'Share palette', onTap: onShare),
+          const SizedBox(width: 44),
         ],
       );
 }
@@ -228,8 +224,8 @@ class _ToneBadge extends StatelessWidget {
   const _ToneBadge({required this.tone});
   @override
   Widget build(BuildContext context) => Container(
-        width: 58,
-        height: 58,
+        width: 64,
+        height: 64,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: AppColors.marigold,
@@ -238,8 +234,8 @@ class _ToneBadge extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('MONK', style: Theme.of(context).textTheme.labelLarge?.copyWith(color: AppColors.forestDeep, fontSize: 8)),
-            Text('$tone', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.forestDeep)),
+            Text('MONK', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.forestDeep)),
+            Text('$tone', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.forestDeep, fontSize: 26, height: 1.1)),
           ],
         ),
       );
@@ -280,7 +276,7 @@ class _Metric extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('${(value.clamp(0, 1) * 100).round()}%', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.forest)),
+            Text('${(value.clamp(0, 1) * 100).round()}%', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.primary)),
             const SizedBox(height: 3),
             Text(label, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.textTertiary)),
           ],
@@ -292,33 +288,40 @@ class _ResultNote extends StatelessWidget {
   final String undertone;
   const _ResultNote({required this.undertone});
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: AppColors.surfaceSage,
-          borderRadius: BorderRadius.circular(AppRadii.lg),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const IconContainer(icon: LucideIcons.leaf, backgroundColor: AppColors.forest, iconColor: AppColors.textInverse),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('What this means for you', style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 5),
-                  Text(
-                    'Your $undertone undertone gives us a useful starting point for choosing colour contrast and warmth — never a set of rules.',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.inkSoft),
-                  ),
-                ],
-              ),
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.nightSurfaceRaised : AppColors.surfaceSage,
+        borderRadius: BorderRadius.circular(AppRadii.lg),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          IconContainer(
+            icon: LucideIcons.leaf,
+            backgroundColor: isDark ? AppColors.nightLine : AppColors.forest,
+            iconColor: isDark ? AppColors.sage : AppColors.textInverse,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('What this means for you', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 5),
+                Text(
+                  'Your $undertone undertone gives us a useful starting point for choosing colour contrast and warmth — never a set of rules.',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: isDark ? AppColors.nightMuted : AppColors.inkSoft),
+                ),
+              ],
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _PaletteSection extends StatelessWidget {
@@ -343,9 +346,9 @@ class _PaletteSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 18, color: isAvoid ? AppColors.clay : AppColors.forest),
+              Icon(icon, size: 18, color: isAvoid ? AppColors.clay : Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
-              Text(label, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: isAvoid ? AppColors.clay : AppColors.forest)),
+              Text(label, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: isAvoid ? AppColors.clay : Theme.of(context).colorScheme.primary)),
             ],
           ),
           const SizedBox(height: 11),
