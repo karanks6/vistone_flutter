@@ -306,7 +306,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(eyebrow, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.forest)),
+          Text(eyebrow, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.primary)),
           const SizedBox(height: 10),
           Text(title, style: Theme.of(context).textTheme.displaySmall),
         ],
@@ -318,6 +318,7 @@ class _PreparationList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     const tips = [
       (LucideIcons.sunMedium, 'Find gentle daylight', 'Face a window and avoid harsh overhead light.'),
       (LucideIcons.focus, 'Keep your face clear', 'Look at the camera with your full face in view.'),
@@ -332,7 +333,11 @@ class _PreparationList extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                IconContainer(icon: tip.$1, backgroundColor: AppColors.surfaceSage, iconColor: AppColors.forest),
+                IconContainer(
+                  icon: tip.$1,
+                  backgroundColor: isDark ? AppColors.nightSurfaceRaised : AppColors.surfaceSage,
+                  iconColor: Theme.of(context).colorScheme.primary,
+                ),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(
