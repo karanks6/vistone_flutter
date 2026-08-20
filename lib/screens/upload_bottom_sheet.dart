@@ -134,7 +134,7 @@ class _SourceOption extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(LucideIcons.arrowUpRight, size: 20, color: AppColors.forest),
+              Icon(LucideIcons.arrowUpRight, size: 20, color: Theme.of(context).colorScheme.primary),
             ],
           ),
         ),
