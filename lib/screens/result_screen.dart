@@ -297,7 +297,7 @@ class _ResultNote extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadii.lg),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           IconContainer(
             icon: LucideIcons.leaf,
