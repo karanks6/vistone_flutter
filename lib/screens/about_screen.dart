@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../widgets/design_system.dart';
 
 class AboutScreen extends StatelessWidget {
@@ -16,7 +17,7 @@ class AboutScreen extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             slivers: [
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 34),
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 14),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate.fixed([
                     Row(
@@ -39,6 +40,8 @@ class AboutScreen extends StatelessWidget {
                     const _MethodList(),
                     const SizedBox(height: AppSpacing.section),
                     _TechnologyNote(),
+                    const SizedBox(height: 12),
+                    _DeveloperInfo(),
                     const SizedBox(height: AppSpacing.section),
                     SizedBox(
                       width: double.infinity,
@@ -193,5 +196,57 @@ class _TechnologyNote extends StatelessWidget {
           ],
         ),
       );
+  }
+}
+
+class _DeveloperInfo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: dark ? AppColors.nightSurfaceRaised : AppColors.surfaceClay,
+        borderRadius: BorderRadius.circular(AppRadii.lg),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('DEVELOPER', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.textTertiary)),
+              Text('v1.0.0', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.textTertiary)),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text('Karan S Suvarna', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 16),
+          
+          GestureDetector(
+            onTap: () => launchUrl(Uri.parse('mailto:suvarnakaran77@gmail.com')),
+            child: Row(
+              children: [
+                const Icon(LucideIcons.mail, size: 18, color: AppColors.clay),
+                const SizedBox(width: 10),
+                Text('suvarnakaran77@gmail.com', style: Theme.of(context).textTheme.bodyMedium),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: () => launchUrl(Uri.parse('https://github.com/karanks6')),
+            child: Row(
+              children: [
+                const Icon(LucideIcons.github, size: 18, color: AppColors.clay),
+                const SizedBox(width: 10),
+                Text('github.com/karanks6', style: Theme.of(context).textTheme.bodyMedium),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
