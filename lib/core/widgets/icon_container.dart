@@ -17,14 +17,15 @@ class IconContainer extends StatelessWidget {
     return Container(
       width: 48,
       height: 48,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Icon(
-        icon,
-        color: iconColor,
-        size: 24,
+        child: Icon(
+          icon,
+          color: iconColor,
+          size: 24,
       ),
     );
   }
