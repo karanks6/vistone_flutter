@@ -41,10 +41,17 @@ class _SplashScreenState extends State<SplashScreen> {
               children: [
                 Row(
                   children: [
-                    const VistoneMark(inverted: true),
+                    Container(
+                      padding: const EdgeInsets.all(1),
+                      decoration: const BoxDecoration(
+                        color: AppColors.textInverse,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Image.asset('assets/icon/vistone_logo.png', width: 75, height: 75),
+                    ),
                     const SizedBox(width: 12),
                     Text(
-                      'VISTONE',
+                      'VISTONE AI',
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
                             color: AppColors.textInverse,
                             letterSpacing: 2.2,
@@ -130,16 +137,16 @@ class _PaletteHalo extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           Container(
-            width: 210,
-            height: 210,
+            width: 250,
+            height: 250,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(color: AppColors.textInverse.withValues(alpha: .12)),
             ),
           ),
           Container(
-            width: 164,
-            height: 164,
+            width: 180,
+            height: 180,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: const LinearGradient(
@@ -157,14 +164,14 @@ class _PaletteHalo extends StatelessWidget {
             ),
           ),
           Container(
-            width: 76,
-            height: 76,
+            width: 140,
+            height: 140,
             decoration: BoxDecoration(
-              color: AppColors.forestDeep.withValues(alpha: .84),
+              color: AppColors.textInverse,
               shape: BoxShape.circle,
               border: Border.all(color: AppColors.textInverse.withValues(alpha: .25)),
             ),
-            child: const VistoneMark(size: 48, inverted: true),
+            child: Center(child: Image.asset('assets/icon/vistone_logo.png', width: 380, height: 380)),
           ),
         ],
       ),
